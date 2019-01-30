@@ -34,3 +34,7 @@
 *.idea
 ibdb/cmake-build-debug
 reference
+
+ibdb/third-party
+ibdb/third-src
+
