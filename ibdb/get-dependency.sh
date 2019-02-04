@@ -7,7 +7,8 @@ DEPS_CONFIG="--prefix=${DEPS_PREFIX} --disable-shared --with-pic"
 
 
 
-export PATH=${DEPS_PREFIX}/bin:$PATH
+export PATH=${DEPS_PREFIX}/lib:$PATH
+export PATH=${DEPS_PREFIX}/include/boost:$PATH
 
 mkdir -p ${DEPS_SOURCE} ${DEPS_PREFIX}
 mkdir -p $DEPS_PREFIX/lib $DEPS_PREFIX/include
