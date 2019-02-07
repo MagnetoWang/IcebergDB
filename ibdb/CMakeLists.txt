@@ -5,19 +5,25 @@ project(ibdb)
 
 
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_MACOSX_RPATH 0)
+file(GLOB SRC_FILES ${PROJECT_SOURCE_DIR}/src/*.cc)
+# set(CMAKE_MACOSX_RPATH 0)
 
-set(Boost_USE_STATIC_LIBS        OFF)
-set(Boost_USE_MULTITHREADED      ON)
-set(Boost_USE_STATIC_RUNTIME     OFF)
-set(BOOST_ALL_DYN_LINK           ON)   # force dynamic linking for all libraries
+# set(Boost_USE_STATIC_LIBS        OFF)
+# set(Boost_USE_MULTITHREADED      ON)
+# set(Boost_USE_STATIC_RUNTIME     OFF)
+# set(BOOST_ALL_DYN_LINK           ON)   # force dynamic linking for all libraries
 
 
 set(BOOST_ROOT third-party/include)
-set(BOOST_DYLIB third-party/lib)
 find_package(Boost REQUIRED COMPONENTS system filesystem)
+
+find_package(gflags REQUIRED)
+
+
+# set(BOOST_DYLIB third-party/lib)
+
 # Boost_LIBRARIES
-link_directories(${BOOST_DYLIB})
+# link_directories(${BOOST_DYLIB})
 # link_directories(${BOOST_ROOT})
 # BOOST_INCLUDEDIR
 #add_library(ibdb library.cpp library.h src/test/test_map.cpp)
@@ -28,14 +34,16 @@ set(SOURCE_FILES src/test/map_test.cpp)
 add_executable(map_test ${SOURCE_FILES})
 
 
-INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
-LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 # target_link_libraries(test-suite ${Boost_LIBRARIES})
 add_executable(boost_test src/test/boost_test.cpp)
 target_link_libraries(boost_test Boost::system Boost::filesystem)
-target_link_libraries(boost_test ${Boost_LIBRARIES})
+# target_link_libraries(boost_test ${Boost_LIBRARIES})
 # link_directories(${BOOST_DYLIB})
 
+add_executable(gflags_test src/test/gflags_test.cpp ${SRC_FILES})
+target_link_libraries(gflags_test gflags)
+
+message(${PROJECT_SOURCE_DIR})
 
 
 
