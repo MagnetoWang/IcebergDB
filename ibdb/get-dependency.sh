@@ -22,10 +22,10 @@ cd ${DEPS_SOURCE}
 # boost
 if [ -f "boost_succ" ]
 then
-    echo "boost exist"
+    echo "boost is exist"
 else
     echo "start install boost...."
-    # wget http://pkg.4paradigm.com/rtidb/dev/boost-header-only.tar.gz >/dev/null
+    wget https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.gz >/dev/null
     tar -zxf boost_1_69_0.tar.gz >/dev/null
     cd boost_1_69_0
     mv boost ${DEPS_PREFIX}/include
@@ -49,8 +49,43 @@ fi
 
 # fi
 
+if [ -d "gflags" ];then
+    echo "gflags is exist"
+else
+    git clone https://github.com/gflags/gflags.git >/dev/null
+    echo "cloning gflags"
+    cd gflags
+    mkdir -p builds
+    cd builds
+    cmake ..
+    mv include/gflags ${DEPS_PREFIX}/include
+    echo "install gflags done"
+    cd ${DEPS_SOURCE}
+fi
+
+if [ -d "glog" ];then
+    echo "glog is exist"
+else
+    git clone https://github.com/google/glog.git >/dev/null
+    echo "cloning glog"
+    cd glog
+    mkdir -p builds
+    cd builds
+    cmake ..
+    mv glog ${DEPS_PREFIX}/include
+    echo "install gflags done"
+    cd ${DEPS_SOURCE}
+fi
+
+
+# if [ -d ""];then
+#     git clone https://github.com/google/double-conversion.git
+#     cd double-conversion
+#     cmake -DBUILD_SHARED_LIBS=ON .
+#     make
+
 # if [ -d "folly" ]; then
-#     wget https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.gz
+#     wget https://github.com/google/googletest/archive/release-1.8.0.tar.gz
 #     tar -zxvf boost_1_69_0.tar.gz
 # fi
 
