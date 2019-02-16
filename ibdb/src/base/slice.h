@@ -2,6 +2,7 @@
 #define IBDB_BASE_SLICE_H_
 
 #include<string>
+#include <string.h>
 #include <assert.h>
 namespace ibdb {
 namespace base {
@@ -12,7 +13,7 @@ public:
     Slice() : data_(""), size_(0), need_free_(false) {}
     Slice(const char* d, size_t n, bool nf) : data_(d), size_(n), need_free_(nf) {}
     Slice(const std::string& s) : data_(s.data()), size_(s.size()), need_free_(false) {}
-    Slice(const char* s) : data_(s), size_(s.size()), need_free_(false) {}
+    Slice(const char* s) : data_(s), size_(strlen(s)), need_free_(false) {}
 
     //destructor function
     ~Slice() {}

@@ -5,7 +5,7 @@ project(ibdb)
 
 
 set(CMAKE_CXX_STANDARD 11)
-file(GLOB SRC_FILES ${PROJECT_SOURCE_DIR}/src/*.cc)
+# file(GLOB SRC_FILES ${PROJECT_SOURCE_DIR}/src/*.cc)
 # set(CMAKE_MACOSX_RPATH 0)
 
 # set(Boost_USE_STATIC_LIBS        OFF)
@@ -13,11 +13,26 @@ file(GLOB SRC_FILES ${PROJECT_SOURCE_DIR}/src/*.cc)
 # set(Boost_USE_STATIC_RUNTIME     OFF)
 # set(BOOST_ALL_DYN_LINK           ON)   # force dynamic linking for all libraries
 
+# list(APPEND CMAKE_INCLUDE_PATH "/usr/local/include/folly")
+# list(APPEND CMAKE_LIBRARY_PATH "/usr/local/lib/folly")
+# include_directories(usr/local/include)
+# include_directories(third-party/include)
+# include_directories(third-party/include/include/folly)
+# include_directories(third-party/include/gflags)
+# include_directories(third-party/include/glog)
+# include_directories(third-party/include/double-conversion)
+# include_directories(third-party/include/lz4)
+# link_libraries(glog build/libglog.dylib)
+# link_directories(usr/local/include/folly)
+
+
+
 
 set(BOOST_ROOT third-party/include)
 find_package(Boost REQUIRED COMPONENTS system filesystem)
-
+# find_package(folly REQUIRED)
 find_package(gflags REQUIRED)
+# find_package(glog REQUIRED)
 
 
 # set(BOOST_DYLIB third-party/lib)
@@ -40,8 +55,17 @@ target_link_libraries(boost_test Boost::system Boost::filesystem)
 # target_link_libraries(boost_test ${Boost_LIBRARIES})
 # link_directories(${BOOST_DYLIB})
 
-add_executable(gflags_test src/test/gflags_test.cpp ${SRC_FILES})
+add_executable(gflags_test src/test/gflags_test.cpp src/flags.cc)
 target_link_libraries(gflags_test gflags)
+
+# add_executable(folly_test src/test/folly_test.cpp)
+# target_link_libraries(folly_test gflags  lzma folly)
+# target_link_libraries(folly_test folly)
+
+# 添加自定义头文件目录
+# 后面以这个为根目录来引用
+include_directories(src)
+add_executable(slice_test src/test/base/slice_test.cpp)
 
 message(${PROJECT_SOURCE_DIR})
 
