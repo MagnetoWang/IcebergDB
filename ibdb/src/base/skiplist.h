@@ -8,7 +8,7 @@ namespace ibdb {
 namespace base {
 
 template<typename Key, class Comparator>
-class SkipList {
+class SkipList : Noncopyable {
 public:
     explicit SkipList(Comparator cmp, Arena* arena);
     ~SkipList();
@@ -17,10 +17,9 @@ public:
 
     class Iterator
     {
-
     public:
         explicit Iterator(const SkipList* list);
-        bool Vaild() const;
+        bool Valid() const;
         const Key& key() const;
         void Next();
         void Prev();
