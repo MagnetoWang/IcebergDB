@@ -64,30 +64,36 @@ add_library(arena src/base/arena.cpp)
 #add_library(ibdb src/test/test_map.cpp)
 #set(FILES src/test/test_map.cpp)
 
+# -------------------------------------
+# ibdb test
+
 set(SOURCE_FILES src/test/map_test.cpp)
 add_executable(map_test ${SOURCE_FILES})
 
-
-# target_link_libraries(test-suite ${Boost_LIBRARIES})
 add_executable(boost_test src/test/boost_test.cpp)
 target_link_libraries(boost_test Boost::system Boost::filesystem)
-# target_link_libraries(boost_test ${Boost_LIBRARIES})
-# link_directories(${BOOST_DYLIB})
 
 add_executable(gflags_test src/test/gflags_test.cpp src/flags.cc)
 target_link_libraries(gflags_test gflags)
 
-# add_executable(folly_test src/test/folly_test.cpp)
-# target_link_libraries(folly_test gflags  lzma folly)
-# target_link_libraries(folly_test folly)
-
-
-# add_executable(atomic_pointer)
 add_executable(slice_test src/test/base/slice_test.cpp)
-
 
 add_executable(base_test src/base/base_test.cpp)
 target_link_libraries(base_test arena)
+
+add_executable(skiplist src/test/base/skiplist_test.cpp)
+target_link_libraries(skiplist_test arena)
+
+
+# target_link_libraries(test-suite ${Boost_LIBRARIES})
+# target_link_libraries(boost_test ${Boost_LIBRARIES})
+# link_directories(${BOOST_DYLIB})
+# add_executable(folly_test src/test/folly_test.cpp)
+# target_link_libraries(folly_test gflags  lzma folly)
+# target_link_libraries(folly_test folly)
+# add_executable(atomic_pointer)
+# -------------------------------------
+
 message(${PROJECT_SOURCE_DIR})
 
 
