@@ -4,7 +4,6 @@
 #include <atomic>
 
 namespace ibdb {
-
 namespace base {
 
 class AtomicPointer {
@@ -17,7 +16,7 @@ public:
     inline void ReleaseStore(void* v) {
         rep_.store(v, std::memory_order_release);
     }
-    inline void* NoBarrierLoad() {
+    inline void* NoBarrierLoad() const {
         return rep_.load(std::memory_order_relaxed);
     }
     inline void NoBarrierStore(void* v) {
@@ -27,10 +26,8 @@ private:
     std::atomic<void*> rep_;
 };
 
-
 } // base
 } // ibdb
-
 
 
 #endif // IBDB_BASE_ATOMIC_POINTER_H
