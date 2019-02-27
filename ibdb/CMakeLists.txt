@@ -17,7 +17,15 @@ include_directories(src)
 set(BOOST_ROOT third-party/include)
 find_package(Boost REQUIRED COMPONENTS system filesystem)
 find_package(gflags REQUIRED)
+find_package(glog REQUIRED)
 # -------------------------------------
+
+# -------------------------------------
+# lib hub
+link_directories(third-party/lib)
+
+# -------------------------------------
+
 
 
 # -------------------------------------
@@ -79,7 +87,7 @@ target_link_libraries(gflags_test gflags)
 add_executable(slice_test src/test/base/slice_test.cpp)
 
 add_executable(base_test src/base/base_test.cpp)
-target_link_libraries(base_test base)
+target_link_libraries(base_test base glog)
 
 add_executable(skiplist_test src/test/base/skiplist_test.cpp)
 target_link_libraries(skiplist_test base)
