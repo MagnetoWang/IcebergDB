@@ -3,6 +3,8 @@
 #include "atomic_pointer.h"
 #include "random.h"
 #include "gtest/gtest.h"
+#include "glog/logging.h"
+
 // #incldue "port/port.h"
 // namespace ibdb {
 // namespace base {
@@ -63,12 +65,12 @@
 //   }
 // }
 
+void GlogTest() {
+    // Log(INFO, "this is baidu logging test");
+    LOG(INFO) << "this is glog logging test " << std::endl;
+}
 
-int main(int argc, char **argv) {
-    std::cout<<"base test"<<std::endl;
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-
+void RandomTest() {
     std::vector<std::pair<size_t, char*>> allocated;
     ibdb::base::Arena arena;
     const int N = 10000;
@@ -99,12 +101,28 @@ int main(int argc, char **argv) {
     }
     bytes += s;
     allocated.push_back(std::make_pair(s, r));
-    std::cout<<bytes<<std::endl;
-    std::cout<<arena.MemoryUsage()<<std::endl;
+    LOG(INFO)<<bytes<<std::endl;
+    LOG(INFO)<<arena.MemoryUsage()<<std::endl;
   }
+}
+
+int main(int argc, char **argv) {
+  google::InitGoogleLogging(argv[0]);
+  google::SetLogDestination(google::INFO,"/Users/magnetowang/Documents/GitHub/IcebergDB/ibdb/log/");  
+  GlogTest();
+
+  std::cout<<"base test"<<std::endl;
+  RandomTest();
+  // ::testing::InitGoogleTest(&argc, argv);
+  // return RUN_ALL_TESTS();
+
+    
+
 
     
 }
+
+
 
 // } // base
 // } // ibdb
