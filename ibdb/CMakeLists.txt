@@ -23,9 +23,9 @@ find_package(gflags REQUIRED)
 # -------------------------------------
 # ibdb lib
 
-add_library(arena src/base/arena.cpp)
+add_library(base src/base/arena.cpp)
 # set_target_properties(libarena PROPERTIES OUTPUT_NAME "arena")
-
+# add_library(skiplist src/base/skiplist.cpp)
 
 # -------------------------------------
 
@@ -79,10 +79,10 @@ target_link_libraries(gflags_test gflags)
 add_executable(slice_test src/test/base/slice_test.cpp)
 
 add_executable(base_test src/base/base_test.cpp)
-target_link_libraries(base_test arena)
+target_link_libraries(base_test base)
 
-add_executable(skiplist src/test/base/skiplist_test.cpp)
-target_link_libraries(skiplist_test arena)
+add_executable(skiplist_test src/test/base/skiplist_test.cpp)
+target_link_libraries(skiplist_test base)
 
 
 # target_link_libraries(test-suite ${Boost_LIBRARIES})
