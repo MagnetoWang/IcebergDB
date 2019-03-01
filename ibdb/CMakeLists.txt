@@ -90,16 +90,14 @@ add_executable(base_test src/base/base_test.cpp)
 target_link_libraries(base_test base glog)
 
 add_executable(skiplist_test src/test/base/skiplist_test.cpp)
-target_link_libraries(skiplist_test base)
+target_link_libraries(skiplist_test base gtest)
 
+add_executable(gtest_test src/test/gtest_test.cpp)
+target_link_libraries(gtest_test base gtest)
 
-# target_link_libraries(test-suite ${Boost_LIBRARIES})
-# target_link_libraries(boost_test ${Boost_LIBRARIES})
-# link_directories(${BOOST_DYLIB})
-# add_executable(folly_test src/test/folly_test.cpp)
-# target_link_libraries(folly_test gflags  lzma folly)
-# target_link_libraries(folly_test folly)
-# add_executable(atomic_pointer)
+add_executable(logging_test src/test/base/logging_test.cpp)
+target_link_libraries(logging_test base gtest)
+
 # -------------------------------------
 
 message(${PROJECT_SOURCE_DIR})
