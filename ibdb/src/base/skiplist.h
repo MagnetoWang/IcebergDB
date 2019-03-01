@@ -20,6 +20,7 @@ public:
     void Insert(const Key& key, Value& value);
     bool Contains(const Key& key) const;
     Node* FindEqual(const Key& key) const;
+    Value GetValue(const Key& key) const;
 
 
     class Iterator
@@ -52,7 +53,8 @@ private:
     }
 
     Random rnd_;
-    Node* NewNode(const Key& key, const Value& value, int height);
+    Node* NewNode(const Key& key, Value& value, int height);
+    Node* NewNode(int height);
     int RandomHeight();
     bool Equal(const Key& a, const Key& b) const {
         return (compare_(a, b) == 0);
@@ -76,7 +78,8 @@ private:
 // 结构体Node
 template<typename Key, typename Value, class Comparator>
 struct SkipList<Key, Value, Comparator>::Node {
-    Node(const Key& k, const Value& v) : key(k), value(v) {}
+    Node(const Key& k, Value& v) : key(k), value(v) {}
+    Node() :  key(), value() {}
     // can't modify any type include pointer type
     // 不允许修改任何类型，如果是指针类型，那么不能修改指针的地址，但是可以修改指针的内容
     Key const key;
@@ -116,11 +119,21 @@ private:
 template<typename Key, typename Value, class Comparator>
 typename SkipList<Key, Value, Comparator>::Node* 
 SkipList<Key, Value, Comparator>::NewNode
-(const Key& key, const Value& value, int height) {
+(const Key& key, Value& value, int height) {
     char* mem = arena_->AllocateAligned(
         sizeof(Node) + sizeof(AtomicPointer) * (height - 1)
     );
     return new (mem)Node(key, value);
+}
+
+template<typename Key, typename Value, class Comparator>
+typename SkipList<Key, Value, Comparator>::Node* 
+SkipList<Key, Value, Comparator>::NewNode
+(int height) {
+    char* mem = arena_->AllocateAligned(
+        sizeof(Node) + sizeof(AtomicPointer) * (height - 1)
+    );
+    return new (mem)Node();
 }
 
 template<typename Key, typename Value, class Comparator>
@@ -270,9 +283,11 @@ template<typename Key, typename Value, class Comparator>
 SkipList<Key, Value, Comparator>::SkipList(Comparator cmp, Arena* arena)
     :   compare_(cmp),
         arena_(arena),
-        head_(NewNode(0, 1, kMaxHeight)),
+        head_(NewNode(kMaxHeight)),
         max_height_(reinterpret_cast<void*>(1)),
         rnd_(0xdeadbeef) {
+            // std::string value = "";
+            // head_ = NewNode(0, value, kMaxHeight);
             for (int i = 0; i < kMaxHeight; i++) {
                 head_->SetNext(i, nullptr);
             }
@@ -326,6 +341,11 @@ SkipList<Key, Value, Comparator>::FindEqual(const Key& key) const {
             }
         }
     }
+}
+
+template<typename Key, typename Value, class Comparator>
+Value SkipList<Key, Value, Comparator>::GetValue(const Key& key) const {
+    return FindEqual(key)->value;
 }
 
 }
