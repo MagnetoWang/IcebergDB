@@ -1,7 +1,7 @@
 #include <iostream>
-#include "arena.h"
-#include "atomic_pointer.h"
-#include "random.h"
+#include "base/arena.h"
+#include "base/atomic_pointer.h"
+#include "base/random.h"
 #include "gtest/gtest.h"
 #include "glog/logging.h"
 
@@ -115,11 +115,6 @@ int main(int argc, char **argv) {
   RandomTest();
   // ::testing::InitGoogleTest(&argc, argv);
   // return RUN_ALL_TESTS();
-
-    
-
-
-    
 }
 
 
