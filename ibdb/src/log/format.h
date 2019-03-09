@@ -1,8 +1,13 @@
 #ifndef IBDB_LOG_FORMAT_H
 #define IBDB_LOG_FORMAT_H
-// #include <unistd.h>
 #include "base/noncopyable.h"
 #include "base/status.h"
+#include "base/slice.h"
+#include <stdio.h>
+#include <unistd.h>
+#include <errno.h>
+using ibdb::base::Status;
+using ibdb::base::Slice;
 namespace ibdb {
 namespace log {
 
@@ -31,7 +36,7 @@ static const int kHeaderSize = 4 + 2 + 1;
 class WritableFile : ibdb::base::Noncopyable {
 public:
     WritableFile() = default;
-    virtual ~WritableFile();
+    virtual ~WritableFile() = default;
 
     virtual ibdb::base::Status Append(const ibdb::base::Slice& data) = 0;
     virtual ibdb::base::Status Close() = 0;
@@ -42,7 +47,7 @@ protected:
     uint64_t filesize_;
 };
 
-static WritableFile* NewWritableFile(const std::string& fname, FILE* f);
+WritableFile* NewWritableFile(const std::string& fname, FILE* f);
 
 // A file abstraction for reading sequentially through a file
 class SequentialFile : ibdb::base::Noncopyable {
@@ -115,7 +120,117 @@ public:
     virtual ~FileLock();
 };
 
+// implementation
+static Status IOError(const std::string& context, int err_number) {
+    return Status::IOError(context, strerror(err_number));
+}
 
+static Status IOOk() {
+    return Status::OK();
+}
+
+class UnixWritableFile final : public WritableFile {
+public:
+    UnixWritableFile(const std::string& filename, FILE* filestream) : filename_(filename), filestream_(filestream) {}
+    ~UnixWritableFile() {
+        if (filestream_ != NULL) {
+            fclose(filestream_);
+        }
+    }
+
+    Status Append(const Slice& data) {
+        size_t r = fwrite(data.data(), 1, data.size(), filestream_);
+        // 验证正确性
+        if (r < 0 && r != data.size()) {
+            return IOError(filename_, errno);
+        }
+        filesize_ += r;
+        return IOOk();
+    }
+
+    Status Close() {
+        if (fclose(filestream_) != 0) {
+            filestream_ = nullptr;
+            return IOError(filename_, errno);
+        }
+        return IOOk();
+    }
+
+    Status Flush() {
+        if (fflush(filestream_) != 0) {
+            filestream_ = nullptr;
+            return IOError(filename_, errno);
+        }
+        return IOOk();
+    }
+
+    Status Sync() {
+        if (fflush(filestream_) != 0 || fsync(fileno(filestream_)) != 0) {
+            filestream_ = nullptr;
+            return IOError(filename_, errno);
+        }
+        return IOOk();
+    }
+
+    uint64_t GetSize() {
+        return filesize_;
+    }
+
+private:
+    std::string filename_;
+    FILE* filestream_;
+};
+
+WritableFile* NewWritableFile(const std::string& fname, FILE* f) {
+    return new UnixWritableFile(fname, f);
+}
+
+Status UnixError(const std::string& context, int error_number) {
+    if (error_number == ENOENT) {
+        return Status::NotFound(context, std::strerror(error_number));
+    } else {
+        return Status::IOError(context, std::strerror(error_number));
+    }
+}
+
+// Implements sequential read access in a file using read().
+//
+// Instances of this class are thread-friendly but not thread-safe, as required
+// by the SequentialFile API.
+class UnixSequentialFile final : public SequentialFile {
+public:
+    UnixSequentialFile(std::string filename, int fd)
+        : fd_(fd), filename_(filename) {}
+    ~UnixSequentialFile() override { close(fd_); }
+
+    Status Read(size_t n, Slice* result, char* scratch) override {
+        Status status;
+        while (true) {
+        ssize_t read_size = read(fd_, scratch, n);
+        if (read_size < 0) {  // Read error.
+            if (errno == EINTR) {
+            continue;  // Retry
+            }
+            status = UnixError(filename_, errno);
+            break;
+        }
+        *result = Slice(scratch, read_size);
+        break;
+        }
+        return status;
+    }
+
+    Status Skip(uint64_t n) override {
+        if (::lseek(fd_, n, SEEK_CUR) == static_cast<off_t>(-1)) {
+        return UnixError(filename_, errno);
+        }
+        return Status::OK();
+    }
+
+private:
+    const int fd_;
+    const std::string filename_;
+};
 
 } // log
 } // ibdb
