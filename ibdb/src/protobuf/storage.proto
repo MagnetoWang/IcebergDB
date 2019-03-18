@@ -1,0 +1,14 @@
+
+syntax="proto2";
+package ibdb.storage;
+
+option cc_generic_services = true;
+// option java_generic_services = true;
+// option java_package = "com._4paradigm.rtidb.tablet";
+// option java_outer_classname = "Tablet";
+
+message LogEntry {
+    required uint64 offset = 1;
+    required uint32 message_size = 2;
+    required string message = 3;
+}

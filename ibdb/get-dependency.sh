@@ -200,6 +200,17 @@ else
     cd ${DEPS_SOURCE}
 fi
 
+if [ -d "protobuf"];then
+    echo "protocol is exist"
+else
+    git clone --depth 1 https://github.com/protocolbuffers/protobuf.git
+    cd protobuf
+    ./autogen.sh
+    ./configure
+    make
+    make install
+fi
+
 
 
 cd $ROOT_PATH
