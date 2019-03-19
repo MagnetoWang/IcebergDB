@@ -8,3 +8,15 @@ DEFINE_string(log_dir_info, "/Users/magnetowang/Documents/GitHub/IcebergDB/ibdb/
 DEFINE_string(log_dir_warn, "/Users/magnetowang/Documents/GitHub/IcebergDB/ibdb/log/warn", "config log dir for testing");
 DEFINE_string(log_dir_error, "/Users/magnetowang/Documents/GitHub/IcebergDB/ibdb/log/error", "config log dir for testing");
 DEFINE_string(log_dir_fatal, "/Users/magnetowang/Documents/GitHub/IcebergDB/ibdb/log/fatal", "config log dir for testing");
+
+
+//dir
+// DEFINE_string
+
+
+//log
+DEFINE_uint64(limiter_max_required, 100, "limiter_max_required in log/format.h");
+
+//table dir
+DEFINE_string(db_root, "ibdb/db", "config db's log which store key and value");
+

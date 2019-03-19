@@ -115,7 +115,7 @@ add_executable(thread_test src/test/thread/thread_test.cpp)
 target_link_libraries(thread_test gtest)
 
 add_executable(disk_test src/test/storage/disk_test.cpp src/flags.cc)
-target_link_libraries(disk_test base log glog gtest gflags)
+target_link_libraries(disk_test base log glog gtest gflags protobuf)
 
 
 # -------------------------------------

@@ -18,16 +18,16 @@ public:
 
     //destructor function
     ~Slice() {}
-    
+
     // assignment function
     Slice(const Slice&) = default;
     Slice& operator=(const Slice&) = default;
-    
+
     // element access
     const char* data() const { return data_; }
     size_t size() const { return size_; }
     bool need_free() const { return need_free_; }
-   
+
     // operations
     bool empty() const { return size_ == 0; }
     char operator[](size_t n) const {

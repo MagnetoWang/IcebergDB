@@ -22,7 +22,6 @@ public:
     Node* FindEqual(const Key& key) const;
     Value GetValue(const Key& key) const;
 
-
     class Iterator
     {
     public:
