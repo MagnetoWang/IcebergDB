@@ -3,11 +3,19 @@
 #include "base/noncopyable.h"
 #include "base/status.h"
 #include "base/slice.h"
+
 #include <stdio.h>
 #include <unistd.h>
+// #include <sys/stat.h>
+#include <fcntl.h>
 #include <errno.h>
+#include <atomic>
+
+#include "glog/logging.h"
+
 using ibdb::base::Status;
 using ibdb::base::Slice;
+
 namespace ibdb {
 namespace log {
 
@@ -47,14 +55,12 @@ protected:
     uint64_t filesize_;
 };
 
-WritableFile* NewWritableFile(const std::string& fname, FILE* f);
-
 // A file abstraction for reading sequentially through a file
 class SequentialFile : ibdb::base::Noncopyable {
 public:
     SequentialFile() = default;
     SequentialFile(const std::string& fname, FILE* f);
-    virtual ~SequentialFile();
+    virtual ~SequentialFile() {};
 
     // Read up to "n" bytes from the file.  "scratch[0..n-1]" may be
     // written by this routine.  Sets "*result" to the data that was
@@ -76,13 +82,11 @@ public:
     virtual Status Skip(uint64_t n) = 0;
 };
 
-static SequentialFile* NewSeqFile(const std::string& fname, FILE* f);
-
 // A file abstraction for randomly reading the contents of a file.
 class RandomAccessFile : ibdb::base::Noncopyable {
 public:
     RandomAccessFile() = default;
-    virtual ~RandomAccessFile();
+    virtual ~RandomAccessFile() {};
 
     // Read up to "n" bytes from the file starting at "offset".
     // "scratch[0..n-1]" may be written by this routine.  Sets "*result"
@@ -95,6 +99,7 @@ public:
     // Safe for concurrent use by multiple threads.
     virtual Status Read(uint64_t offset, size_t n, Slice* result,
                         char* scratch) const = 0;
+    virtual const int GetFd() const = 0;
 };
 
 class Logger {
@@ -193,6 +198,46 @@ Status UnixError(const std::string& context, int error_number) {
     }
 }
 
+// Helper class to limit resource usage to avoid exhaustion.
+// Currently used to limit read-only file descriptors and mmap file usage
+// so that we do not run out of file descriptors or virtual memory, or run into
+// kernel performance problems for very large databases.
+class Limiter {
+public:
+    // Limit maximum number of resources to |max_acquires|.
+    Limiter(int max_acquires) : acquires_allowed_(max_acquires) {}
+
+    Limiter(const Limiter&) = delete;
+    Limiter operator=(const Limiter&) = delete;
+
+    // If another resource is available, acquire it and return true.
+    // Else return false.
+    bool Acquire() {
+        int old_acquires_allowed =
+            acquires_allowed_.fetch_sub(1, std::memory_order_relaxed);
+
+        if (old_acquires_allowed > 0)
+        return true;
+
+        acquires_allowed_.fetch_add(1, std::memory_order_relaxed);
+        return false;
+    }
+
+    // Release a resource acquired by a previous call to Acquire() that returned
+    // true.
+    void Release() {
+        acquires_allowed_.fetch_add(1, std::memory_order_relaxed);
+    }
+
+private:
+    // The number of available resources.
+    //
+    // This is a counter and is not tied to the invariants of any other class, so
+    // it can be operated on safely using std::memory_order_relaxed.
+    std::atomic<int> acquires_allowed_;
+};
+
+
 // Implements sequential read access in a file using read().
 //
 // Instances of this class are thread-friendly but not thread-safe, as required
@@ -231,6 +276,78 @@ private:
     const int fd_;
     const std::string filename_;
 };
+
+SequentialFile* NewSequentialFile(const std::string& fname, int fd) {
+    return new UnixSequentialFile(fname, fd);
+}
+
+// Implements random read access in a file using pread().
+//
+// Instances of this class are thread-safe, as required by the RandomAccessFile
+// API. Instances are immutable and Read() only calls thread-safe library
+// functions.
+class PosixRandomAccessFile final : public RandomAccessFile {
+public:
+    // The new instance takes ownership of |fd|. |fd_limiter| must outlive this
+    // instance, and will be used to determine if .
+    PosixRandomAccessFile(std::string filename, int fd, Limiter* fd_limiter)
+        : has_permanent_fd_(fd_limiter->Acquire()),
+        fd_(has_permanent_fd_ ? fd : -1),
+        fd_limiter_(fd_limiter),
+        filename_(std::move(filename)) {
+        if (!has_permanent_fd_) {
+            assert(fd_ == -1);
+            ::close(fd);  // The file will be opened on every read.
+        }
+    }
+
+    ~PosixRandomAccessFile() override {
+        if (has_permanent_fd_) {
+            assert(fd_ != -1);
+            ::close(fd_);
+            fd_limiter_->Release();
+        }
+    }
+
+    Status Read(uint64_t offset, size_t n, Slice* result,
+                char* scratch) const override {
+        int fd = fd_;
+        if (!has_permanent_fd_) {
+            fd = ::open(filename_.c_str(), O_RDONLY);
+            if (fd < 0) {
+                return UnixError(filename_, errno);
+            }
+        }
+
+        assert(fd != -1);
+
+        Status status;
+        ssize_t read_size = ::pread(fd, scratch, n, static_cast<off_t>(offset));
+        *result = Slice(scratch, (read_size < 0) ? 0 : read_size);
+        if (read_size < 0) {
+            // An error: return a non-ok status.
+            status = UnixError(filename_, errno);
+        }
+        if (!has_permanent_fd_) {
+            // Close the temporary file descriptor opened earlier.
+            assert(fd != fd_);
+            ::close(fd);
+        }
+        return status;
+    }
+    const int GetFd() const override {
+        return fd_;
+    }
+private:
+    const bool has_permanent_fd_;  // If false, the file is opened on every read.
+    const int fd_;  // -1 if has_permanent_fd_ is false.
+    Limiter* const fd_limiter_;
+    const std::string filename_;
+};
+
+RandomAccessFile* NewRandomAccessFile(std::string filename, int fd, Limiter* fd_limiter) {
+    return new PosixRandomAccessFile(filename, fd, fd_limiter);
+}
 
 } // log
 } // ibdb

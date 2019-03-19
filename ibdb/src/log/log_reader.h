@@ -101,6 +101,8 @@ private:
     void operator=(const Reader&);
 };
 
+
+
 } // log
 } // ibdb
 
