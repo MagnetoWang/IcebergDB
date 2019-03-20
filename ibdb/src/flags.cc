@@ -20,3 +20,6 @@ DEFINE_uint64(limiter_max_required, 100, "limiter_max_required in log/format.h")
 //table dir
 DEFINE_string(db_root, "ibdb/db", "config db's log which store key and value");
 
+//segment
+DEFINE_uint32(skiplist_height, 4, "config segment skiplist");
+

@@ -19,6 +19,7 @@ public:
     // ~SkipList();
     void Insert(const Key& key, Value& value);
     bool Contains(const Key& key) const;
+    Node* Remove(const Key& key);
     Node* FindEqual(const Key& key) const;
     Value GetValue(const Key& key) const;
 
@@ -77,12 +78,13 @@ private:
 // 结构体Node
 template<typename Key, typename Value, class Comparator>
 struct SkipList<Key, Value, Comparator>::Node {
-    Node(const Key& k, Value& v) : key(k), value(v) {}
-    Node() :  key(), value() {}
+    Node(const Key& k, Value& v, uint8_t h) : key(k), value(v), height(h) {}
+    Node(uint8_t h) :  key(), value(), height(h) {}
     // can't modify any type include pointer type
     // 不允许修改任何类型，如果是指针类型，那么不能修改指针的地址，但是可以修改指针的内容
     Key const key;
     Value value;
+    uint8_t height;
 
     Node* Next(int n) {
         assert(n >= 0);
@@ -122,7 +124,7 @@ SkipList<Key, Value, Comparator>::NewNode
     char* mem = arena_->AllocateAligned(
         sizeof(Node) + sizeof(AtomicPointer) * (height - 1)
     );
-    return new (mem)Node(key, value);
+    return new (mem)Node(key, value, height);
 }
 
 template<typename Key, typename Value, class Comparator>
@@ -132,7 +134,7 @@ SkipList<Key, Value, Comparator>::NewNode
     char* mem = arena_->AllocateAligned(
         sizeof(Node) + sizeof(AtomicPointer) * (height - 1)
     );
-    return new (mem)Node();
+    return new (mem)Node(height);
 }
 
 template<typename Key, typename Value, class Comparator>
@@ -296,7 +298,7 @@ template<typename Key, typename Value, class Comparator>
 void SkipList<Key, Value, Comparator>::Insert(const Key& key, Value& value) {
     Node* prev[kMaxHeight];
     Node* x = FindGreaterOrEqual(key, prev);
-    
+
     assert(x == nullptr || !Equal(key, x->key));
 
     int height = RandomHeight();
@@ -334,7 +336,10 @@ SkipList<Key, Value, Comparator>::FindEqual(const Key& key) const {
             x = next;
         } else {
             if (level == 0) {
-                return next;
+                if (Equal(next->key, key)) {
+                    return next;
+                }
+                return nullptr;
             } else {
                 level--;
             }
@@ -347,8 +352,23 @@ Value SkipList<Key, Value, Comparator>::GetValue(const Key& key) const {
     return FindEqual(key)->value;
 }
 
+//找到目标节点和目标的上一个节点。然后直接把目标节点内容赋值到上一个节点即可！
+template<typename Key, typename Value, class Comparator>
+typename SkipList<Key, Value, Comparator>::Node* 
+SkipList<Key, Value, Comparator>::Remove(const Key& key) {
+    if (!Contains(key)) {
+        return nullptr;
+    }
+    Node* prev[kMaxHeight];
+    Node* target = FindGreaterOrEqual(key, prev);
+    for (int i = 0; i < target->height; i++) {
+        prev[i]->SetNext(i, target->Next(i));
+    }
+    return target;
 }
-}
+
+} // base
+} // ibdb
 
 
 #endif // IBDB_BASE_SKIPLIST_H

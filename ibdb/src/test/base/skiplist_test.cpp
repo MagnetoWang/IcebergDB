@@ -71,23 +71,54 @@ TEST (SkiplistTest, InsertAndLookup) {
 }
 
 TEST (SkiplistTest, GetValue) {
-    ibdb::base::Arena arena;
-    IbdbStringComparator cmp;
-    ibdb::base::SkipList<IbdbString, IbdbString, IbdbStringComparator> list(cmp, &arena);
-    std::string value("cba");
-    list.Insert("abc", value);
-    value = "cba1";
-    list.Insert("abcd", value);
-    value = "cba2";
-    list.Insert("abce", value);
-    value = "cba3";
-    list.Insert("abcde", value);
-    assert(list.GetValue("abc") == "cba");
-    assert(list.GetValue("abcd") == "cba1");
-    assert(list.GetValue("abce") == "cba2");
-    assert(list.GetValue("abcde") == "cba3");
-    std::cout<<list.GetValue("abc")<<std::endl;
-    std::cout<<list.GetValue("abcde")<<std::endl;
+  ibdb::base::Arena arena;
+  IbdbStringComparator cmp;
+  ibdb::base::SkipList<IbdbString, IbdbString, IbdbStringComparator> list(cmp, &arena);
+  std::string value("cba");
+  list.Insert("abc", value);
+  value = "cba1";
+  list.Insert("abcd", value);
+  value = "cba2";
+  list.Insert("abce", value);
+  value = "cba3";
+  list.Insert("abcde", value);
+  assert(list.GetValue("abc") == "cba");
+  assert(list.GetValue("abcd") == "cba1");
+  assert(list.GetValue("abce") == "cba2");
+  assert(list.GetValue("abcde") == "cba3");
+  std::cout<<list.GetValue("abc")<<std::endl;
+  std::cout<<list.GetValue("abcde")<<std::endl;
+}
+
+TEST(SkiplistTest, Remove) {
+  ibdb::base::Arena arena;
+  IbdbStringComparator cmp;
+  ibdb::base::SkipList<IbdbString, IbdbString, IbdbStringComparator> list(cmp, &arena);
+  std::string value("cba");
+  list.Insert("abc", value);
+  value = "cba1";
+  list.Insert("abcd", value);
+  value = "cba2";
+  list.Insert("abce", value);
+  value = "cba3";
+  list.Insert("abcde", value);
+  assert(list.GetValue("abc") == "cba");
+  assert(list.GetValue("abcd") == "cba1");
+  assert(list.GetValue("abce") == "cba2");
+  assert(list.GetValue("abcde") == "cba3");
+  list.Remove("abcd");
+  ASSERT_FALSE(list.Contains("abcd"));
+  // ASSERT_EQ(list.FindEqual("abcd")->value, "cba1");
+  // ASSERT_EQ(list.GetValue("abcd"), "cba1");
+  ASSERT_EQ(list.FindEqual("abcd"), nullptr);
+  ASSERT_EQ(list.GetValue("abc"), "cba");
+  // ASSERT_EQ(list.GetValue("abcd"),  "cba1");
+  ASSERT_EQ(list.GetValue("abce"),  "cba2");
+  ASSERT_EQ(list.GetValue("abcde"),  "cba3");
+
+  // assert(list.GetValue("abc") == "cba");
+  // assert(list.GetValue("abce") == "cba2");
+  // assert(list.GetValue("abcde") == "cba3");
 }
 
 }

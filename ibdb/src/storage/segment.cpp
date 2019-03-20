@@ -8,6 +8,8 @@ using ibdb::base::SkipList;
 using ibdb::base::Arena;
 using ibdb::base::Slice;
 
+DECLARE_uint32(skiplist_height);
+
 namespace ibdb {
 namespace storage {
 

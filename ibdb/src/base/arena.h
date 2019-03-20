@@ -22,7 +22,7 @@ private:
     AtomicPointer memory_usage_;
 
 public:
-    Arena(/* args */);
+    Arena();
     ~Arena();
 
     char* Allocate(size_t bytes);
