@@ -62,9 +62,5 @@ char* Arena::AllocateAligned(size_t bytes) {
     return result;
 }
 
-
-
-
-
 } // base
 } // ibdb
