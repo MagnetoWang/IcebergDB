@@ -1,7 +1,7 @@
 #ifndef IBDB_STORAGE_SEGMENT_H
 #define IBDB_STORAGE_SEGMENT_H
 #include <mutex>
-
+#include <atomic>
 #include "base/noncopyable.h"
 #include "base/skiplist.h"
 #include "base/arena.h"
@@ -35,7 +35,7 @@ typedef Slice Feature;
 typedef SkipList<Slice, uint64_t, SliceComparator> Index;
 typedef SkipList<uint64_t, Index, TimeStampComparator>  ValueEntry;
 typedef SkipList<Slice, ValueEntry, SliceComparator> Entries;
-
+// TODO 添加多线程互斥元
 class Segment {
 public:
     Segment(uint8_t skiplist_height);
@@ -45,14 +45,16 @@ public:
     bool Contain(const Slice& key);
     bool Contain(const Slice& key, const uint64_t timestamp);
     bool Contain(const Slice& key, const uint64_t timestamp, const Slice& value);
-    bool Delete();
+    bool Remove(const Slice& key);
+    bool Remove(const Slice& key, const uint64_t timestamp);
+    bool Remove(const Slice& key, const uint64_t timestamp, const Slice& value);
     bool BuildIndex(const Slice& key);
 
 private:
     Entries* segment_;
     Arena arena_;
-    uint64_t entries_count_;
-    uint64_t memory_size_;
+    std::atomic<uint64_t> entries_count_;
+    std::atomic<uint64_t> memory_size_;
     uint8_t skiplist_height_
     std::mutex mu_;
 };
@@ -81,6 +83,7 @@ bool Segment::Contain(const Slice& key) {
 
 // is contain ts
 bool Segment::Contain(const Slice& key, const uint64_t timestamp) {
+    std::lock_guard<std::mutex> lock(mu_);
     if (segment_->Contain(key)) {
         return segment_->GetValue(key).Contains(timestamp);
     } else {
@@ -90,13 +93,44 @@ bool Segment::Contain(const Slice& key, const uint64_t timestamp) {
 
 // is contain value
 bool Segment::Contain(const Slice& key, const uint64_t timestamp, const Slice& value) {
-    if(Contain(key, timestamp)) {
+    if (Contain(key, timestamp)) {
         return segment_->GetValue(key).GetValue(timestamp).Contains(value);
     } else {
         return false;
     }
 }
 
+// remove key
+bool Segment::Remove(const Slice& key) {
+    if (Contain(key)) {
+        return segment_->Remove(key);
+    } else {
+        LOG(WARNING) << "no key in segment";
+        return false;
+    }
+}
+
+// remove timestamp
+bool Segment::Remove(const Slice& key, const uint64_t timestamp) {
+    if (Contain(key, timestamp)) {
+        return segment_->GetValue(key).Remove(timestamp);
+    } else {
+        LOG(WARNING) << "no timestamp in segment which key is " << key.data();
+        return false;
+    }
+}
+
+// remove value
+bool Segment::Remove(const Slice& key, const uint64_t timestamp, const Slice& value) {
+    if (Contain(key, timestamp, value)) {
+        return segment_->GetValue(key).GetValue(timestamp).Remove(timestamp);
+    } else {
+        LOG(WARNING) << "no value in segment which key is " << key.data() << "and ts = " << timestamp;
+        return false;
+    }
+}
+
+// build key index not timestamp index
 bool Segment::BuildIndex(const Slice& key) {
     if (!Contain(key)) {
         TimeStampComparator ts_cmp;
