@@ -108,17 +108,10 @@ TEST(SkiplistTest, Remove) {
   assert(list.GetValue("abcde") == "cba3");
   list.Remove("abcd");
   ASSERT_FALSE(list.Contains("abcd"));
-  // ASSERT_EQ(list.FindEqual("abcd")->value, "cba1");
-  // ASSERT_EQ(list.GetValue("abcd"), "cba1");
   ASSERT_EQ(list.FindEqual("abcd"), nullptr);
   ASSERT_EQ(list.GetValue("abc"), "cba");
-  // ASSERT_EQ(list.GetValue("abcd"),  "cba1");
   ASSERT_EQ(list.GetValue("abce"),  "cba2");
   ASSERT_EQ(list.GetValue("abcde"),  "cba3");
-
-  // assert(list.GetValue("abc") == "cba");
-  // assert(list.GetValue("abce") == "cba2");
-  // assert(list.GetValue("abcde") == "cba3");
 }
 
 }
