@@ -203,15 +203,16 @@ fi
 if [ -d "protobuf"];then
     echo "protocol is exist"
 else
-    git clone --depth 1 https://github.com/protocolbuffers/protobuf.git
+    git clone -b v2.6.0 --depth 1 https://github.com/protocolbuffers/protobuf.git
     cd protobuf
     ./autogen.sh
-    ./configure
-    make
+    export CPPFLAGS=-I${DEPS_PREFIX}/include
+    export LDFLAGS=-L${DEPS_PREFIX}/lib
+    ./configure $DEPS_CONFIG CXXFLAGS="-D_GLIBCXX_USE_CXX11_ABI=0"
+    make -j5
     make install
+    cd ${DEPS_SOURCE}
 fi
-
-
 
 cd $ROOT_PATH
 
