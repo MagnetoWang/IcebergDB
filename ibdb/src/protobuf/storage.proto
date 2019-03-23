@@ -4,11 +4,30 @@ package ibdb.storage;
 
 option cc_generic_services = true;
 // option java_generic_services = true;
-// option java_package = "com._4paradigm.rtidb.tablet";
-// option java_outer_classname = "Tablet";
+// option java_package = "com.ibdb.storage";
+// option java_outer_classname = "Storage";
 
 message LogEntry {
     required uint64 offset = 1;
     required uint32 message_size = 2;
     required string message = 3;
+}
+
+message Schema {
+    required string name = 1;
+    required string type = 2;
+    required bool is_key = 3;
+}
+
+message TableManifest {
+    required string name = 1;
+    //all of log and index name
+    repeated string log_name = 2;
+    repeated string index_name = 3;
+
+    required Schema schema = 4;
+    required uint64 current_offset = 5;
+    required string current_log_file= 6;
+    required string current_index_file = 7;
+
 }
