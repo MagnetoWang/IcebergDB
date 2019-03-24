@@ -10,15 +10,23 @@ set(CMAKE_CXX_STANDARD 11)
 # -------------------------------------
 # include hub
 include_directories(third-party/include)
+include_directories(third-party/include/google)
 # 添加自定义头文件目录
 # 后面以这个为根目录来引用
 include_directories(src)
 # include_directories(/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Kernel.framework/Versions/A/Headers/machine)
 
-set(BOOST_ROOT third-party/include)
+set(BOOST_ROOT third-party)
+
 find_package(Boost REQUIRED COMPONENTS system filesystem)
 find_package(gflags REQUIRED)
 find_package(glog REQUIRED)
+# find_package(protobuf REQUIRED)
+# if(PROTOBUF_FOUND)
+#     message(STATUS "protobuf library found")
+# else()
+#     message(FATAL_ERROR "protobuf library is needed but cant be found")
+# endif()
 # -------------------------------------
 
 # -------------------------------------
@@ -32,8 +40,9 @@ link_directories(third-party/lib)
 # -------------------------------------
 # ibdb lib
 
-add_library(base src/base/arena.cpp src/base/crc32c.cpp)
+add_library(base src/base/arena.cpp src/base/crc32c.cpp src/flags.cc)
 add_library(log src/log/format.cpp src/log/log_reader.cpp src/log/log_writer.cpp)
+add_library(protocc STATIC src/protobuf/storage.pb.cc)
 # add_library(storage src/storage/table.cpp)
 # set_target_properties(libarena PROPERTIES OUTPUT_NAME "arena")
 # add_library(skiplist src/base/skiplist.cpp)
@@ -110,14 +119,17 @@ target_link_libraries(log_test base log gtest gflags glog)
 add_executable(glog_test src/test/glog_test.cpp src/flags.cc)
 target_link_libraries(glog_test glog gtest gflags)
 
-
 add_executable(thread_test src/test/thread/thread_test.cpp)
 target_link_libraries(thread_test gtest)
 
 add_executable(disk_test src/test/storage/disk_test.cpp src/flags.cc)
-target_link_libraries(disk_test base log glog gtest gflags protobuf)
+target_link_libraries(disk_test base log glog gtest gflags)
 
+add_executable(storage_test src/test/protobuf/storage_test.cpp src/flags.cc src/protobuf/storage.pb.cc)
+target_link_libraries(storage_test base log protobuf pthread glog gtest gflags)
 
+add_executable(table_test src/test/storage/table_test.cpp)
+target_link_libraries(table_test base log protocc protobuf pthread glog gtest gflags)
 # -------------------------------------
 
 message(${PROJECT_SOURCE_DIR})
