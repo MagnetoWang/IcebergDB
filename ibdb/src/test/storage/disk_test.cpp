@@ -19,6 +19,7 @@ using ibdb::storage::WritableFileHandle;
 using ibdb::storage::RandomAccessFileHandle;
 using ibdb::base::Random;
 
+DECLARE_string(ibdb_log_dir);
 
 namespace ibdb {
 namespace storage {
@@ -304,7 +305,7 @@ TEST(DiskTest, RandomAccessFileHandleTest) {
 int main(int argc, char** argv) {
     // ibdb::base::GlogInit();
     google::InitGoogleLogging(argv[0]);
-    google::SetLogDestination(google::INFO,"/Users/magnetowang/Documents/GitHub/IcebergDB/ibdb/log/");
+    google::SetLogDestination(google::INFO, FLAGS_ibdb_log_dir.c_str());
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
