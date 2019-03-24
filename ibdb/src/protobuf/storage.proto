@@ -19,15 +19,25 @@ message Schema {
     required bool is_key = 3;
 }
 
+message LogManifest {
+    required string log_name = 1;
+    required uint32 current_pos = 2;
+    required string index_name = 3;
+    required uint32 index_current_pos = 4;
+}
+
+message IndexMap {
+    required uint64 offset = 1;
+    required uint32 position = 2; 
+}
+
 message TableManifest {
     required string name = 1;
     //all of log and index name
-    repeated string log_name = 2;
-    repeated string index_name = 3;
+    repeated LogManifest log_manifest= 2;
 
-    required Schema schema = 4;
-    required uint64 current_offset = 5;
-    required string current_log_file= 6;
-    required string current_index_file = 7;
+    required Schema schema = 3;
+    required uint64 current_offset = 4;
+    required LogManifest current_log_file= 5;
 
 }
