@@ -19,10 +19,10 @@ TEST(StorageProto, Simply) {
     schema->set_type("string");
     schema->set_is_key(false);
     manifest.set_current_offset(10);
-    manifest.set_current_log_file("00000002.log");
-    manifest.set_current_index_file("000000002.index");
-    manifest.add_index_name("000001.index");
-    manifest.add_log_name("000001.log");
+    // manifest.set_current_log_file("00000002.log");
+    // manifest.set_current_index_file("000000002.index");
+    // manifest.add_index_name("000001.index");
+    // manifest.add_log_name("000001.log");
     LOG(INFO) << manifest.name();
     std::string out;
     LOG(INFO) << manifest.SerializeAsString();
