@@ -29,8 +29,8 @@ namespace storage {
 
 class WritableFileHandle {
 public:
-    explicit WritableFileHandle(std::string& filename);
-    // WritableFileHandle(std::string& filename, uint64_t index);
+    explicit WritableFileHandle(const std::string& filename);
+    WritableFileHandle(const std::string& filename, uint32_t current_pos);
     ~WritableFileHandle() {
         if (filestream_ != nullptr) {
             fclose(filestream_);
@@ -64,8 +64,8 @@ public:
         if (!s.ok()) {
             return s;
         }
+        current_pos_ = current_pos_ + 12 + slice.size();
         return Status::OK();
-
     }
 
     Status Sync() {
@@ -76,25 +76,35 @@ public:
         return file_handle_->GetSize();
     }
 
+    uint32_t GetCurrentPos() const {
+        return  current_pos_;
+    }
+
 private:
     std::string filename_;
     FILE* filestream_;
+    uint32_t current_pos_;
     WritableFile* file_handle_;
 };
 
-WritableFileHandle::WritableFileHandle(std::string& filename) 
-    : filename_(filename),
-     filestream_(nullptr),
-     file_handle_(nullptr) {
+// append log
+WritableFileHandle::WritableFileHandle(const std::string& filename) 
+    :   filename_(filename),
+        filestream_(nullptr),
+        current_pos_(0),
+        file_handle_(nullptr) {
     filestream_ = fopen (filename_.c_str() , "a+");
     file_handle_ = ibdb::log::NewWritableFile(filename_, filestream_);
 }
 
-// WritableFileHandle::WritableFileHandle(std::string& filename, uint64_t index)
-//     : filename_(filename), index_(index) {
-//         filestream_ = fopen (filename_.c_str() , "a+");
-//         file_handle_(filename_, filestream_);
-// }
+WritableFileHandle::WritableFileHandle(const std::string& filename, uint32_t current_pos)
+    :   filename_(filename),
+        filestream_(nullptr),
+        current_pos_(current_pos),
+        file_handle_(nullptr) {
+        filestream_ = fopen (filename_.c_str() , "a+");
+        file_handle_ = ibdb::log::NewWritableFile(filename_, filestream_);
+}
 
 // class ReaderHandle {
 // private:
