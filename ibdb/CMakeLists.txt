@@ -11,6 +11,7 @@ set(CMAKE_CXX_STANDARD 11)
 # include hub
 include_directories(third-party/include)
 include_directories(third-party/include/google)
+include_directories(third-party/include/brpc)
 # 添加自定义头文件目录
 # 后面以这个为根目录来引用
 include_directories(src)
@@ -126,10 +127,13 @@ add_executable(disk_test src/test/storage/disk_test.cpp src/flags.cc)
 target_link_libraries(disk_test base log glog gtest gflags)
 
 add_executable(storage_test src/test/protobuf/storage_test.cpp src/flags.cc src/protobuf/storage.pb.cc)
-target_link_libraries(storage_test base log protobuf pthread glog gtest gflags)
+target_link_libraries(storage_test base log protocc protobuf pthread glog gtest gflags)
 
 add_executable(table_test src/test/storage/table_test.cpp)
 target_link_libraries(table_test base log protocc protobuf pthread glog gtest gflags)
+
+add_executable(brpc_test src/test/brpc_test.cpp)
+target_link_libraries(brpc_test base log protocc protobuf pthread glog gtest gflags brpc)
 # -------------------------------------
 
 message(${PROJECT_SOURCE_DIR})
