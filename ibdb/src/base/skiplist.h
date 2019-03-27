@@ -19,7 +19,7 @@ public:
     // ~SkipList();
     void Insert(const Key& key, Value& value);
     bool Contains(const Key& key) const;
-    Node* Remove(const Key& key);
+    bool Remove(const Key& key);
     Node* FindEqual(const Key& key) const;
     Value GetValue(const Key& key) const;
 
@@ -353,18 +353,19 @@ Value SkipList<Key, Value, Comparator>::GetValue(const Key& key) const {
 }
 
 //找到目标节点和目标的上一个节点。然后直接把目标节点内容赋值到上一个节点即可！
+// TODO 节点的回收问题
 template<typename Key, typename Value, class Comparator>
-typename SkipList<Key, Value, Comparator>::Node* 
-SkipList<Key, Value, Comparator>::Remove(const Key& key) {
+bool SkipList<Key, Value, Comparator>::Remove(const Key& key) {
     if (!Contains(key)) {
-        return nullptr;
+        return false;
     }
     Node* prev[kMaxHeight];
     Node* target = FindGreaterOrEqual(key, prev);
     for (int i = 0; i < target->height; i++) {
         prev[i]->SetNext(i, target->Next(i));
     }
-    return target;
+    // delete target;
+    return true;
 }
 
 } // base
