@@ -7,12 +7,14 @@
 #include "port/port.h"
 #include "random.h"
 #include "arena.h"
+
+#include "butil/containers/flat_map.h"
 //TODO 总结如何设计一个良好的模板 最初的传值，然后指针结构，然后是引用
 namespace ibdb {
 namespace base {
 
 template<typename Key, typename Value, class Comparator>
-class SkipList : Noncopyable {
+class SkipList {
 private:
     struct Node;
 public:
@@ -59,6 +61,7 @@ private:
 
     Random rnd_;
     Node* NewNode(const Key& key, Value& value, int height);
+    // Node* NewNode(const Key& key, int height);
     Node* NewNode(int height);
     int RandomHeight();
     bool Equal(const Key& a, const Key& b) const {
@@ -74,6 +77,8 @@ private:
     Node* FindLessThan(const Key& key) const;
     Node* FindLast() const;
 
+    butil::FlatMap<Key, Value> handle;
+
     // 不允许复制
     // no copying allowed
     // SkipList(const SkipList&);
@@ -84,6 +89,7 @@ private:
 template<typename Key, typename Value, class Comparator>
 struct SkipList<Key, Value, Comparator>::Node {
     Node(const Key& k, Value& v, uint8_t h) : key_(k), value_(v), height_(h) {}
+    Node(const Key& k, uint8_t h) : key_(k), height_(h) {}
     Node(uint8_t h) : height_(h), key_(), value_() {}
     // can't modify any type include pointer type
     // 不允许修改任何类型，如果是指针类型，那么不能修改指针的地址，但是可以修改指针的内容
@@ -147,6 +153,16 @@ SkipList<Key, Value, Comparator>::NewNode
     );
     return new (mem)Node(height);
 }
+
+// template<typename Key, typename Value, class Comparator>
+// typename SkipList<Key, Value, Comparator>::Node* 
+// SkipList<Key, Value, Comparator>::NewNode
+// (const Key& key, int height) {
+//     char* mem = arena_->AllocateAligned(
+//         sizeof(Node) + sizeof(AtomicPointer) * (height - 1)
+//     );
+//     return new (mem)Node(key, height);
+// }
 
 template<typename Key, typename Value, class Comparator>
 inline SkipList<Key, Value, Comparator>::Iterator::Iterator
