@@ -13,10 +13,14 @@ message LogEntry {
     required string message = 3;
 }
 
-message Schema {
+message Field {
     required string name = 1;
     required string type = 2;
     required bool is_key = 3;
+}
+
+message Schema {
+    repeated Field field = 1;
 }
 
 message LogManifest {
@@ -31,13 +35,16 @@ message IndexMap {
     required uint32 position = 2; 
 }
 
+message LogIndexMap {
+    required string index_name = 1;
+    repeated IndexMap offset_position = 2;
+}
+
 message TableManifest {
     required string name = 1;
     //all of log and index name
     repeated LogManifest log_manifest= 2;
-
     required Schema schema = 3;
     required uint64 current_offset = 4;
     required LogManifest current_log_file= 5;
-
 }

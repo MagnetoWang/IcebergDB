@@ -10,8 +10,9 @@ int main() {
     sort_key.insert(std::make_pair(1000, "baidu"));
     sort_key.insert(std::make_pair(500, "ali"));
     sort_key.insert(std::make_pair(700, "tengxu"));
+    // std::cout<< std::to_string(sort_key) << std::endl;
     for (const auto& iter : sort_key) {
         std::cout<<iter.first<<std::endl;
-        std::cout<<iter.second<<std::endl;
+        // std::cout<<iter.second<<std::endl;
     }
 }

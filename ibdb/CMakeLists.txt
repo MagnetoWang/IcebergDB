@@ -5,7 +5,7 @@ project(ibdb)
 
 
 set(CMAKE_CXX_STANDARD 11)
-
+set(CMAKE_WARN_DEPRECATED true)
 
 # -------------------------------------
 # include hub
@@ -44,7 +44,7 @@ link_directories(third-party/lib)
 add_library(base src/base/arena.cpp src/base/crc32c.cpp src/flags.cc)
 add_library(log src/log/format.cpp src/log/log_reader.cpp src/log/log_writer.cpp)
 add_library(protocc STATIC src/protobuf/storage.pb.cc)
-# add_library(storage src/storage/table.cpp)
+add_library(storage src/storage/table.cpp)
 # set_target_properties(libarena PROPERTIES OUTPUT_NAME "arena")
 # add_library(skiplist src/base/skiplist.cpp)
 

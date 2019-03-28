@@ -45,6 +45,8 @@ public:
         return file_handle_->Append(*slice);
     }
 
+    // append message with offset.
+    // format is likely offset + message.size() + message.
     Status Append(uint64_t offset, const Slice& slice) {
         char* offset_byte = new char[8];
         ibdb::base::EncodeFixed64(offset_byte, offset);

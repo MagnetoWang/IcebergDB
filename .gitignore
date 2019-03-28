@@ -40,3 +40,4 @@ ibdb/third-src
 ibdb/build
 ibdb/log
 *.INFO
+ibdb/.vscode

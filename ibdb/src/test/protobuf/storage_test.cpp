@@ -15,9 +15,10 @@ TEST(StorageProto, Simply) {
     TableManifest manifest;
     manifest.set_name("simply");
     Schema* schema = manifest.mutable_schema();
-    schema->set_name("student_name");
-    schema->set_type("string");
-    schema->set_is_key(false);
+    Field* field = schema->add_field();
+    field->set_name("student_name");
+    field->set_type("string");
+    field->set_is_key(false);
     manifest.set_current_offset(10);
     // manifest.set_current_log_file("00000002.log");
     // manifest.set_current_index_file("000000002.index");

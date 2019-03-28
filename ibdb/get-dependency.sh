@@ -67,9 +67,14 @@ fi
 
 if [ -d "glog" ];then
     echo "glog is exist"
+    # cd glog
+    # ./autogen.sh && ./configure && make -j5 && make install
+    # cd ${DEPS_SOURCE}
 else
+# v4.0
     git clone --depth 1 https://github.com/google/glog.git >/dev/null
     cd glog
+    
     mkdir -p builds
     cd builds
     cmake ..
@@ -166,7 +171,18 @@ if [ -d "openssl" ];then
 else
     git clone --depth 1 https://github.com/openssl/openssl.git
     cd openssl
+    mkdir -p ${DEPS_PREFIX}/openssl
+    ./config --prefix=${DEPS_PREFIX}/openssl --openssldir=${DEPS_PREFIX}/openssl
+    make -j5
+    make install
     cp -r include/openssl ${DEPS_PREFIX}/include
+    rm -rf ${DEPS_PREFIX}/lib/libssl.so*
+    rm -rf ${DEPS_PREFIX}/lib/libcrypto.so*
+    cd ${DEPS_PREFIX}/openssl
+    cp -r lib/. ${DEPS_PREFIX}/lib
+    cp -r bin/. ${DEPS_PREFIX}/bin
+    cd ..
+    rm -rf openssl
     cd ${DEPS_SOURCE}
 fi
 
@@ -200,12 +216,26 @@ else
     cd ${DEPS_SOURCE}
 fi
 
-if [ -d "protobuf"];then
+if [ -d "protobuf" ];then
     echo "protocol is exist"
+    cd protobuf2.6
+    # ./autogen.sh
+    # autoreconf -f -i -Wall,no-obsolete
+    export CPPFLAGS=-I${DEPS_PREFIX}/include
+    export LDFLAGS=-L${DEPS_PREFIX}/lib
+    # ./configure $DEPS_CONFIG CXXFLAGS="-D_GLIBCXX_USE_CXX11_ABI=0"
+    # make -j5
+    # make install
+    cp -r src/.lib/. ${DEPS_PREFIX}/lib
+    cp -r src/.lib/protoc  ${DEPS_PREFIX}/bin
+    cp -r src/.lib/protoc  /usr/local/bin/protoc
+    cp -r src/.lib/. /usr/local/lib
+    cd ${DEPS_SOURCE}
 else
-    git clone -b v2.6.0 --depth 1 https://github.com/protocolbuffers/protobuf.git
+    git clone -b v2.5.0 --depth 1 https://github.com/protocolbuffers/protobuf.git
     cd protobuf
-    ./autogen.sh
+    # ./autogen.sh
+    autoreconf -f -i -Wall,no-obsolete
     export CPPFLAGS=-I${DEPS_PREFIX}/include
     export LDFLAGS=-L${DEPS_PREFIX}/lib
     ./configure $DEPS_CONFIG CXXFLAGS="-D_GLIBCXX_USE_CXX11_ABI=0"
@@ -214,10 +244,62 @@ else
     cd ${DEPS_SOURCE}
 fi
 
+if [ -d "leveldb" ];then
+    echo "leveldb is exist"
+    # cd leveldb
+    # cp -r include/. ${DEPS_PREFIX}/include
+    # mkdir -p build && cd build
+    # cmake -DCMAKE_BUILD_TYPE=Release .. && cmake --build .
+    # make install
+    # cp -r include/. ${DEPS_PREFIX}/include/leveldb
+    # cp libleveldb.a ${DEPS_PREFIX}/lib/libleveldb.a
+
+    # cd ${DEPS_SOURCE}
+else
+    git clone --depth 1 https://github.com/google/leveldb.git
+    # mkdir -p ${DEPS_PREFIX}/include/leveldb
+    cd leveldb
+    cp -r include/. ${DEPS_PREFIX}/include
+    mkdir -p build && cd build
+    cmake -DCMAKE_BUILD_TYPE=Release .. && cmake --build .
+    make install
+    cp -r include/. ${DEPS_PREFIX}/include/leveldb
+    cp libleveldb.a ${DEPS_PREFIX}/lib/libleveldb.a
+
+    cd ${DEPS_SOURCE}
+fi
+
+if [ -d "brpc" ];then
+    echo "brpc is exist"
+    cd brpc
+    # sh config_brpc.sh --headers=${DEPS_PREFIX}/include/brpc --libs=${DEPS_PREFIX}/lib --with-glog
+    sh config_brpc.sh --with-glog --headers=${DEPS_PREFIX}/include --libs=${DEPS_PREFIX}/lib
+    make -j5
+    cp -r output/bin/. ${DEPS_PREFIX}/bin
+    cp -r output/lib/. ${DEPS_PREFIX}/lib
+    mkdir -p ${DEPS_PREFIX}/include/brpc
+    cp -r output/include/. ${DEPS_PREFIX}/include/brpc
+    cd ..
+    cd ${DEPS_SOURCE}
+else
+    # git clone --depth 1 https://github.com/apache/incubator-brpc.git
+    cd incubator-brpc
+    sh config_brpc.sh --headers=${DEPS_PREFIX}/include --libs=${DEPS_PREFIX}/lib --with-glog
+    make -j5
+    cp -r output/bin/. ${DEPS_PREFIX}/bin
+    cp -r output/lib/. ${DEPS_PREFIX}/lib
+    mkdir -p ${DEPS_PREFIX}/include/brpc
+    cp -r output/include/. ${DEPS_PREFIX}/include/brpc
+    cd ..
+    mv incubator-brpc brpc
+    cd ${DEPS_SOURCE}
+fi
+
 cd $ROOT_PATH
 
 # cp -r /usr/local/lib/. ${ROOT_PATH}/build
 # cp -r /usr/local/lib ${DEPS_PREFIX}
 # cp -r /usr/local/include ${DEPS_PREFIX}
+# sh config_brpc.sh --headers=/Users/magnetowang/Documents/GitHub/IcebergDB/ibdb/third-party/include --libs=/Users/magnetowang/Documents/GitHub/IcebergDB/ibdb/third-party/lib
 
-# /Users/magnetowang/Documents/GitHub/IcebergDB/ibdb/third-party/include
+#          /Users/magnetowang/Documents/GitHub/IcebergDB/ibdb/third-party/include

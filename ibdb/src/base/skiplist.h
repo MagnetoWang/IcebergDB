@@ -7,6 +7,7 @@
 #include "port/port.h"
 #include "random.h"
 #include "arena.h"
+//TODO 总结如何设计一个良好的模板 最初的传值，然后指针结构，然后是引用
 namespace ibdb {
 namespace base {
 
@@ -15,13 +16,15 @@ class SkipList : Noncopyable {
 private:
     struct Node;
 public:
-    explicit SkipList(Comparator cmp, Arena* arena);
+    SkipList(Comparator cmp, Arena* arena);
     // ~SkipList();
     void Insert(const Key& key, Value& value);
     bool Contains(const Key& key) const;
     bool Remove(const Key& key);
     Node* FindEqual(const Key& key) const;
-    Value GetValue(const Key& key) const;
+    Value& GetValue(const Key& key) const;
+    Node* tail() const {return tail_;}
+    Node* GetNode(const Key& key) const;
 
     class Iterator
     {
@@ -41,10 +44,12 @@ public:
         Node* node_;
     };
 private:
+    //TODO 跳表高度flag化
     enum { kMaxHeight = 12};
     Comparator const compare_;
     Arena* const arena_;
     Node* const head_;
+    Node* tail_;
     AtomicPointer max_height_;
     // double conversion from intptr_t to int
     // intptr_t 是为了适应不同平台指针对应的不同字节数
@@ -78,13 +83,12 @@ private:
 // 结构体Node
 template<typename Key, typename Value, class Comparator>
 struct SkipList<Key, Value, Comparator>::Node {
-    Node(const Key& k, Value& v, uint8_t h) : key(k), value(v), height(h) {}
-    Node(uint8_t h) :  key(), value(), height(h) {}
+    Node(const Key& k, Value& v, uint8_t h) : key_(k), value_(v), height_(h) {}
+    Node(uint8_t h) : height_(h), key_(), value_() {}
     // can't modify any type include pointer type
     // 不允许修改任何类型，如果是指针类型，那么不能修改指针的地址，但是可以修改指针的内容
-    Key const key;
-    Value value;
-    uint8_t height;
+    Node(const Node&) = delete;
+    void operator=(const SkipList&) {}
 
     Node* Next(int n) {
         assert(n >= 0);
@@ -102,8 +106,15 @@ struct SkipList<Key, Value, Comparator>::Node {
         assert(n >= 0);
         next_[n].NoBarrierStore(x);
     }
+
+    const Key& key() const {return key_;}
+    Value& value() {return value_;}
+    uint8_t height() const {return height_;}
 private:
     AtomicPointer next_[1];
+    Key const key_;
+    Value value_;
+    uint8_t height_;
 };
 
 /**
@@ -203,7 +214,7 @@ template<typename Key, typename Value, class Comparator>
 bool SkipList<Key, Value, Comparator>::KeyIsAfterNode
 (const Key& key, Node* n) const {
     // 当前节点是否为最后一个节点
-    return (n != nullptr) && (compare_(n->key, key) < 0);
+    return (n != nullptr) && (compare_(n->key(), key) < 0);
 }
 
 template<typename Key, typename Value, class Comparator>
@@ -289,8 +300,10 @@ SkipList<Key, Value, Comparator>::SkipList(Comparator cmp, Arena* arena)
         rnd_(0xdeadbeef) {
             // std::string value = "";
             // head_ = NewNode(0, value, kMaxHeight);
+            tail_ = NewNode(kMaxHeight);
             for (int i = 0; i < kMaxHeight; i++) {
                 head_->SetNext(i, nullptr);
+
             }
         }
 
@@ -299,7 +312,7 @@ void SkipList<Key, Value, Comparator>::Insert(const Key& key, Value& value) {
     Node* prev[kMaxHeight];
     Node* x = FindGreaterOrEqual(key, prev);
 
-    assert(x == nullptr || !Equal(key, x->key));
+    assert(x == nullptr || !Equal(key, x->key()));
 
     int height = RandomHeight();
     if (height > GetMaxHeight()) {
@@ -316,16 +329,6 @@ void SkipList<Key, Value, Comparator>::Insert(const Key& key, Value& value) {
 }
 
 template<typename Key, typename Value, class Comparator>
-bool SkipList<Key, Value, Comparator>::Contains(const Key& key) const {
-    Node* x = FindGreaterOrEqual(key, nullptr);
-    if (x != nullptr && Equal(key, x->key)) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-template<typename Key, typename Value, class Comparator>
 typename SkipList<Key, Value, Comparator>::Node* 
 SkipList<Key, Value, Comparator>::FindEqual(const Key& key) const {
     Node* x = head_;
@@ -336,7 +339,7 @@ SkipList<Key, Value, Comparator>::FindEqual(const Key& key) const {
             x = next;
         } else {
             if (level == 0) {
-                if (Equal(next->key, key)) {
+                if (next != nullptr && Equal(next->key(), key)) {
                     return next;
                 }
                 return nullptr;
@@ -348,8 +351,34 @@ SkipList<Key, Value, Comparator>::FindEqual(const Key& key) const {
 }
 
 template<typename Key, typename Value, class Comparator>
-Value SkipList<Key, Value, Comparator>::GetValue(const Key& key) const {
-    return FindEqual(key)->value;
+bool SkipList<Key, Value, Comparator>::Contains(const Key& key) const {
+    Node* x = FindEqual(key);
+    if (x != nullptr && Equal(key, x->key())) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+// 需要判断是否存在,否则返回nullptr影响后面所有依赖的代码
+template<typename Key, typename Value, class Comparator>
+Value& SkipList<Key, Value, Comparator>::GetValue(const Key& key) const {
+    Node* x = FindEqual(key);
+    if (x != nullptr && Equal(key, x->key())) {
+        return x->value();
+    } else {
+        return tail_->value();
+    }
+}
+
+template<typename Key, typename Value, class Comparator>
+typename SkipList<Key, Value, Comparator>::Node* SkipList<Key, Value, Comparator>::GetNode(const Key& key) const {
+    Node* x = FindEqual(key);
+    if (x != nullptr && Equal(key, x->key())) {
+        return x;
+    } else {
+        return tail_;
+    }
 }
 
 //找到目标节点和目标的上一个节点。然后直接把目标节点内容赋值到上一个节点即可！
@@ -361,7 +390,7 @@ bool SkipList<Key, Value, Comparator>::Remove(const Key& key) {
     }
     Node* prev[kMaxHeight];
     Node* target = FindGreaterOrEqual(key, prev);
-    for (int i = 0; i < target->height; i++) {
+    for (int i = 0; i < target->height(); i++) {
         prev[i]->SetNext(i, target->Next(i));
     }
     // delete target;

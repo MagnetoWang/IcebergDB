@@ -1,10 +1,11 @@
 ROOT_PATH=`pwd`
 
-sh generate-code.sh
+echo sh generate-code.sh 2>/dev/null
 
 
 mkdir -p build
 cd build
+# cmake -Wdeprecated-declarations=ON -Wno-deprecated=ON ..
 cmake ..
 make -j5
 
