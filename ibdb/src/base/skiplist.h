@@ -1,3 +1,9 @@
+/*
+ * @Author: MagnetoWang 
+ * @Date: 2019-03-29 09:48:59 
+ * @Last Modified by: MagnetoWang
+ * @Last Modified time: 2019-03-29 09:51:43
+ */
 #ifndef IBDB_BASE_SKIPLIST_H
 #define IBDB_BASE_SKIPLIST_H
 
@@ -24,9 +30,11 @@ public:
     bool Contains(const Key& key) const;
     bool Remove(const Key& key);
     Node* FindEqual(const Key& key) const;
-    Value& GetValue(const Key& key) const;
+    // unresonable function
+    // Value& GetValue(const Key& key) const;
     Node* tail() const {return tail_;}
-    Node* GetNode(const Key& key) const;
+    // actually getnode is equal to findEqual
+    // Node* GetNode(const Key& key) const;
 
     class Iterator
     {
@@ -307,6 +315,22 @@ int SkipList<Key, Value, Comparator>::RandomHeight() {
     return height;
 }
 
+// template<typename Key, typename Value, class Comparator>
+// SkipList<Key, Value, Comparator>::SkipList(Comparator cmp, Arena* arena)
+//     :   compare_(cmp),
+//         arena_(arena),
+//         head_(NewNode(kMaxHeight)),
+//         max_height_(reinterpret_cast<void*>(1)),
+//         rnd_(0xdeadbeef) {
+//             // std::string value = "";
+//             // head_ = NewNode(0, value, kMaxHeight);
+//             tail_ = NewNode(kMaxHeight);
+//             for (int i = 0; i < kMaxHeight; i++) {
+//                 head_->SetNext(i, nullptr);
+
+//             }
+//         }
+
 template<typename Key, typename Value, class Comparator>
 SkipList<Key, Value, Comparator>::SkipList(Comparator cmp, Arena* arena)
     :   compare_(cmp),
@@ -315,11 +339,9 @@ SkipList<Key, Value, Comparator>::SkipList(Comparator cmp, Arena* arena)
         max_height_(reinterpret_cast<void*>(1)),
         rnd_(0xdeadbeef) {
             // std::string value = "";
-            // head_ = NewNode(0, value, kMaxHeight);
             tail_ = NewNode(kMaxHeight);
             for (int i = 0; i < kMaxHeight; i++) {
                 head_->SetNext(i, nullptr);
-
             }
         }
 
@@ -327,6 +349,7 @@ template<typename Key, typename Value, class Comparator>
 void SkipList<Key, Value, Comparator>::Insert(const Key& key, Value& value) {
     Node* prev[kMaxHeight];
     Node* x = FindGreaterOrEqual(key, prev);
+    assert(x == nullptr);
 
     assert(x == nullptr || !Equal(key, x->key()));
 
@@ -338,6 +361,7 @@ void SkipList<Key, Value, Comparator>::Insert(const Key& key, Value& value) {
         max_height_.NoBarrierStore(reinterpret_cast<void*>(height));
     }
     x = NewNode(key, value, height);
+    assert(x != nullptr);
     for (int i = 0; i < height; i++) {
         x->NoBarrierSetNext(i, prev[i]->NoBarrierNext(i));
         prev[i]->SetNext(i, x);
@@ -368,8 +392,8 @@ SkipList<Key, Value, Comparator>::FindEqual(const Key& key) const {
 
 template<typename Key, typename Value, class Comparator>
 bool SkipList<Key, Value, Comparator>::Contains(const Key& key) const {
-    Node* x = FindEqual(key);
-    if (x != nullptr && Equal(key, x->key())) {
+    Node* x = FindGreaterOrEqual(key, nullptr);
+    if (x != nullptr && x != tail_ && Equal(key, x->key())) {
         return true;
     } else {
         return false;
@@ -377,25 +401,26 @@ bool SkipList<Key, Value, Comparator>::Contains(const Key& key) const {
 }
 
 // 需要判断是否存在,否则返回nullptr影响后面所有依赖的代码
-template<typename Key, typename Value, class Comparator>
-Value& SkipList<Key, Value, Comparator>::GetValue(const Key& key) const {
-    Node* x = FindEqual(key);
-    if (x != nullptr && Equal(key, x->key())) {
-        return x->value();
-    } else {
-        return tail_->value();
-    }
-}
+// 这个功能其实很不合理！！！node不存在的时候怎么返回value
+// template<typename Key, typename Value, class Comparator>
+// Value& SkipList<Key, Value, Comparator>::GetValue(const Key& key) const {
+//     Node* x = FindEqual(key);
+//     if (x != nullptr && Equal(key, x->key())) {
+//         return x->value();
+//     } else {
+//         return tail_->value();
+//     }
+// }
 
-template<typename Key, typename Value, class Comparator>
-typename SkipList<Key, Value, Comparator>::Node* SkipList<Key, Value, Comparator>::GetNode(const Key& key) const {
-    Node* x = FindEqual(key);
-    if (x != nullptr && Equal(key, x->key())) {
-        return x;
-    } else {
-        return tail_;
-    }
-}
+// template<typename Key, typename Value, class Comparator>
+// typename SkipList<Key, Value, Comparator>::Node* SkipList<Key, Value, Comparator>::GetNode(const Key& key) const {
+//     Node* x = FindEqual(key);
+//     if (x != nullptr && Equal(key, x->key())) {
+//         return x;
+//     } else {
+//         return tail_;
+//     }
+// }
 
 //找到目标节点和目标的上一个节点。然后直接把目标节点内容赋值到上一个节点即可！
 // TODO 节点的回收问题
