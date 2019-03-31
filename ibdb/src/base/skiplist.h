@@ -97,7 +97,7 @@ private:
 template<typename Key, typename Value, class Comparator>
 struct SkipList<Key, Value, Comparator>::Node {
     Node(const Key& k, Value& v, uint8_t h) : key_(k), value_(v), height_(h) {}
-    Node(const Key& k, uint8_t h) : key_(k), height_(h) {}
+    // Node(const Key& k, uint8_t h) : key_(k), height_(h) {}
     Node(uint8_t h) : height_(h), key_(), value_() {}
     // can't modify any type include pointer type
     // 不允许修改任何类型，如果是指针类型，那么不能修改指针的地址，但是可以修改指针的内容
@@ -339,19 +339,21 @@ SkipList<Key, Value, Comparator>::SkipList(Comparator cmp, Arena* arena)
         max_height_(reinterpret_cast<void*>(1)),
         rnd_(0xdeadbeef) {
             // std::string value = "";
+            // head_ = NewNode(0, value, kMaxHeight);
             tail_ = NewNode(kMaxHeight);
             for (int i = 0; i < kMaxHeight; i++) {
                 head_->SetNext(i, nullptr);
             }
         }
 
+//TODO skiplist can't be inserted when it already has key
 template<typename Key, typename Value, class Comparator>
 void SkipList<Key, Value, Comparator>::Insert(const Key& key, Value& value) {
     Node* prev[kMaxHeight];
     Node* x = FindGreaterOrEqual(key, prev);
-    assert(x == nullptr);
 
     assert(x == nullptr || !Equal(key, x->key()));
+    // assert(!Equal(key, x->key()));
 
     int height = RandomHeight();
     if (height > GetMaxHeight()) {
@@ -367,6 +369,7 @@ void SkipList<Key, Value, Comparator>::Insert(const Key& key, Value& value) {
         prev[i]->SetNext(i, x);
     }
 }
+
 
 template<typename Key, typename Value, class Comparator>
 typename SkipList<Key, Value, Comparator>::Node* 
@@ -393,7 +396,7 @@ SkipList<Key, Value, Comparator>::FindEqual(const Key& key) const {
 template<typename Key, typename Value, class Comparator>
 bool SkipList<Key, Value, Comparator>::Contains(const Key& key) const {
     Node* x = FindGreaterOrEqual(key, nullptr);
-    if (x != nullptr && x != tail_ && Equal(key, x->key())) {
+    if (x != nullptr && Equal(key, x->key())) {
         return true;
     } else {
         return false;
