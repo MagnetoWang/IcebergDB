@@ -35,6 +35,7 @@ public:
     Node* tail() const {return tail_;}
     // actually getnode is equal to findEqual
     // Node* GetNode(const Key& key) const;
+    // Node* FindGreaterOrEqual(const Key& key, Node** prev) const;
 
     class Iterator
     {
@@ -123,12 +124,14 @@ struct SkipList<Key, Value, Comparator>::Node {
 
     const Key& key() const {return key_;}
     Value& value() {return value_;}
-    uint8_t height() const {return height_;}
+    // bugfix : don't return height_ directly
+    // or you will get nothing
+    int height() const {return (int)height_;}
 private:
-    AtomicPointer next_[1];
     Key const key_;
     Value value_;
     uint8_t height_;
+    AtomicPointer next_[1];
 };
 
 /**
@@ -147,9 +150,11 @@ typename SkipList<Key, Value, Comparator>::Node*
 SkipList<Key, Value, Comparator>::NewNode
 (const Key& key, Value& value, int height) {
     char* mem = arena_->AllocateAligned(
-        sizeof(Node) + sizeof(AtomicPointer) * (height - 1)
+        sizeof(Node) + sizeof(AtomicPointer) * (height - 1) //+ sizeof(Value) + sizeof(uint8_t) + sizeof(Key)
     );
-    return new (mem)Node(key, value, height);
+    
+    Node* x = new (mem)Node(key, value, height);
+    return x;
 }
 
 template<typename Key, typename Value, class Comparator>
@@ -316,7 +321,7 @@ int SkipList<Key, Value, Comparator>::RandomHeight() {
 }
 
 // template<typename Key, typename Value, class Comparator>
-// SkipList<Key, Value, Comparator>::SkipList(Comparator cmp, Arena* arena)
+// SkipList<Key, Value, Comp arator>::SkipList(Comparator cmp, Arena* arena)
 //     :   compare_(cmp),
 //         arena_(arena),
 //         head_(NewNode(kMaxHeight)),
@@ -338,7 +343,6 @@ SkipList<Key, Value, Comparator>::SkipList(Comparator cmp, Arena* arena)
         head_(NewNode(kMaxHeight)),
         max_height_(reinterpret_cast<void*>(1)),
         rnd_(0xdeadbeef) {
-            // std::string value = "";
             // head_ = NewNode(0, value, kMaxHeight);
             tail_ = NewNode(kMaxHeight);
             for (int i = 0; i < kMaxHeight; i++) {
@@ -348,12 +352,14 @@ SkipList<Key, Value, Comparator>::SkipList(Comparator cmp, Arena* arena)
 
 //TODO skiplist can't be inserted when it already has key
 template<typename Key, typename Value, class Comparator>
+// typename SkipList<Key, Value, Comparator>::Node* 
 void SkipList<Key, Value, Comparator>::Insert(const Key& key, Value& value) {
     Node* prev[kMaxHeight];
     Node* x = FindGreaterOrEqual(key, prev);
-
-    assert(x == nullptr || !Equal(key, x->key()));
-    // assert(!Equal(key, x->key()));
+    if(x != nullptr) {
+        assert(!Equal(key, x->key()));
+    }
+    // assert(x == nullptr || !Equal(key, x->key()));
 
     int height = RandomHeight();
     if (height > GetMaxHeight()) {
@@ -368,6 +374,7 @@ void SkipList<Key, Value, Comparator>::Insert(const Key& key, Value& value) {
         x->NoBarrierSetNext(i, prev[i]->NoBarrierNext(i));
         prev[i]->SetNext(i, x);
     }
+    // return x;
 }
 
 
@@ -433,9 +440,21 @@ bool SkipList<Key, Value, Comparator>::Remove(const Key& key) {
         return false;
     }
     Node* prev[kMaxHeight];
+    for (int i = 0; i < kMaxHeight; i++) {
+        prev[i] = head_;
+    }
     Node* target = FindGreaterOrEqual(key, prev);
+    if (target == nullptr) {
+        return false;
+    }
+    for (int i = 0; i < kMaxHeight; i++) {
+        prev[i] = head_;
+    }
+    // std::cout<<kMaxHeight << std::endl;
     for (int i = 0; i < target->height(); i++) {
-        prev[i]->SetNext(i, target->Next(i));
+        std::cout <<  prev[i]->Next(i)->height() << std::endl;
+        // prev[i]->SetNext(i, target->Next(i));
+        target->SetNext(i, nullptr);
     }
     // delete target;
     return true;
