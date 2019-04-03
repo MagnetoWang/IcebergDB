@@ -15,6 +15,8 @@
 #include "arena.h"
 
 #include "butil/containers/flat_map.h"
+#include "glog/logging.h"
+
 //TODO 总结如何设计一个良好的模板 最初的传值，然后指针结构，然后是引用
 namespace ibdb {
 namespace base {
@@ -33,6 +35,7 @@ public:
     // unresonable function
     // Value& GetValue(const Key& key) const;
     Node* tail() const {return tail_;}
+    Node* head() const {return head_;}
     // actually getnode is equal to findEqual
     // Node* GetNode(const Key& key) const;
     // Node* FindGreaterOrEqual(const Key& key, Node** prev) const;
@@ -104,22 +107,25 @@ struct SkipList<Key, Value, Comparator>::Node {
     // 不允许修改任何类型，如果是指针类型，那么不能修改指针的地址，但是可以修改指针的内容
     Node(const Node&) = delete;
     void operator=(const SkipList&) {}
-
     Node* Next(int n) {
         assert(n >= 0);
         return reinterpret_cast<Node*>(next_[n].AcquireLoad());
+        // return next_[n].load(std::memory_order_acquire);
     }
     void SetNext(int n, Node* x) {
         assert(n >= 0);
         next_[n].ReleaseStore(x);
+        // next_[n].store(x, std::memory_order_release);
     }
     Node* NoBarrierNext(int n) {
         assert(n >= 0);
         return reinterpret_cast<Node*>(next_[n].NoBarrierLoad());
+        // return next_[n].load(std::memory_order_relaxed);
     }
     void NoBarrierSetNext(int n, Node* x) {
         assert(n >= 0);
         next_[n].NoBarrierStore(x);
+        // next_[n].load(std::memory_order_relaxed);
     }
 
     const Key& key() const {return key_;}
@@ -132,6 +138,7 @@ private:
     Value value_;
     uint8_t height_;
     AtomicPointer next_[1];
+    // std::atomic<Node* >* next_;
 };
 
 /**
@@ -150,7 +157,7 @@ typename SkipList<Key, Value, Comparator>::Node*
 SkipList<Key, Value, Comparator>::NewNode
 (const Key& key, Value& value, int height) {
     char* mem = arena_->AllocateAligned(
-        sizeof(Node) + sizeof(AtomicPointer) * (height - 1) //+ sizeof(Value) + sizeof(uint8_t) + sizeof(Key)
+        sizeof(Node) + sizeof(AtomicPointer) * (height - 1)// + sizeof(Value) + sizeof(uint8_t) + sizeof(Key)
     );
     
     Node* x = new (mem)Node(key, value, height);
@@ -162,10 +169,17 @@ typename SkipList<Key, Value, Comparator>::Node*
 SkipList<Key, Value, Comparator>::NewNode
 (int height) {
     char* mem = arena_->AllocateAligned(
-        sizeof(Node) + sizeof(AtomicPointer) * (height - 1)
+        sizeof(Node) + sizeof(AtomicPointer) * (height - 1)// + sizeof(Value) + sizeof(uint8_t) + sizeof(Key)
     );
     return new (mem)Node(height);
 }
+
+// template<typename Key, typename Value, class Comparator>
+// typename SkipList<Key, Value, Comparator>::Node* 
+// SkipList<Key, Value, Comparator>::NewNode
+// (int height) {
+//     return new Node(height);
+// }
 
 // template<typename Key, typename Value, class Comparator>
 // typename SkipList<Key, Value, Comparator>::Node* 
@@ -321,7 +335,7 @@ int SkipList<Key, Value, Comparator>::RandomHeight() {
 }
 
 // template<typename Key, typename Value, class Comparator>
-// SkipList<Key, Value, Comp arator>::SkipList(Comparator cmp, Arena* arena)
+// SkipList<Key, Value, Comparator>::SkipList(Comparator cmp, Arena* arena)
 //     :   compare_(cmp),
 //         arena_(arena),
 //         head_(NewNode(kMaxHeight)),
@@ -347,6 +361,7 @@ SkipList<Key, Value, Comparator>::SkipList(Comparator cmp, Arena* arena)
             tail_ = NewNode(kMaxHeight);
             for (int i = 0; i < kMaxHeight; i++) {
                 head_->SetNext(i, nullptr);
+                tail_->SetNext(i, nullptr);
             }
         }
 
@@ -434,6 +449,7 @@ bool SkipList<Key, Value, Comparator>::Contains(const Key& key) const {
 
 //找到目标节点和目标的上一个节点。然后直接把目标节点内容赋值到上一个节点即可！
 // TODO 节点的回收问题
+// TODO 似乎只能头结点可以使用setNext后面的节点使用都会出现segment fault问题
 template<typename Key, typename Value, class Comparator>
 bool SkipList<Key, Value, Comparator>::Remove(const Key& key) {
     if (!Contains(key)) {
@@ -444,19 +460,10 @@ bool SkipList<Key, Value, Comparator>::Remove(const Key& key) {
         prev[i] = head_;
     }
     Node* target = FindGreaterOrEqual(key, prev);
-    if (target == nullptr) {
-        return false;
-    }
-    for (int i = 0; i < kMaxHeight; i++) {
-        prev[i] = head_;
-    }
-    // std::cout<<kMaxHeight << std::endl;
     for (int i = 0; i < target->height(); i++) {
-        std::cout <<  prev[i]->Next(i)->height() << std::endl;
-        // prev[i]->SetNext(i, target->Next(i));
+        prev[i]->SetNext(i, target->Next(i));
         target->SetNext(i, nullptr);
     }
-    // delete target;
     return true;
 }
 
