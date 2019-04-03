@@ -1,3 +1,9 @@
+/*
+ * @Author: MagnetoWang 
+ * @Date: 2019-03-29 09:50:57 
+ * @Last Modified by:   MagnetoWang 
+ * @Last Modified time: 2019-03-29 09:50:57 
+ */
 #ifndef IBDB_BASE_NONCOPYABLE_H
 #define IBDB_BASE_NONCOPYABLE_H
 namespace ibdb {

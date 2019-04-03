@@ -6,6 +6,9 @@ project(ibdb)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_WARN_DEPRECATED true)
+set(CMAKE_BUILD_TYPE "Debug")
+set(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")
+set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 
 # -------------------------------------
 # include hub
@@ -103,7 +106,7 @@ add_executable(base_test src/test/base/base_test.cpp)
 target_link_libraries(base_test base glog)
 
 add_executable(skiplist_test src/test/base/skiplist_test.cpp)
-target_link_libraries(skiplist_test base gtest)
+target_link_libraries(skiplist_test base gtest glog gflags)
 
 add_executable(gtest_test src/test/gtest_test.cpp)
 target_link_libraries(gtest_test base gtest)
