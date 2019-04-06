@@ -1,9 +1,16 @@
+/*
+ * @Author: MagnetoWang 
+ * @Date: 2019-03-29 09:51:05 
+ * @Last Modified by:   MagnetoWang 
+ * @Last Modified time: 2019-03-29 09:51:05 
+ */
 #ifndef IBDB_BASE_UTILS_H
 #define IBDB_BASE_UTILS_H
 #include <fcntl.h>
 #include <stdio.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <chrono> // for timestamp
 #include "port/port.h"
 #include "glog/logging.h"
 #include "gflags/gflags.h"
@@ -134,12 +141,31 @@ static inline bool RemoveFile(std::string& path) {
     }
 }
 
+// a folder can be delete when it has no files
 static inline bool RemoveFolder(std::string& path) {
     if(::rmdir(path.c_str()) == 0) {
         return true;
     } else {
         return false;
     }
+}
+
+static inline uint64_t GetMillisecondTimestamp() {
+    auto now = std::chrono::system_clock::now();
+    uint64_t ts = (uint64_t)std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+    return ts;
+}
+
+static inline uint64_t GetMicrosecondsTimestamp() {
+    auto now = std::chrono::system_clock::now();
+    uint64_t ts = (uint64_t)std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count();
+    return ts;
+}
+
+static inline uint64_t GetSecondTimestamp() {
+    auto now = std::chrono::system_clock::now();
+    uint64_t ts = (uint64_t)std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
+    return ts;
 }
 
 } // base
