@@ -60,8 +60,8 @@ private:
 
 // for recover table
 Table::Table(const TableManifest& tmanifest)
-    :   current_offset_(tmanifest.current_offset()),
-        table_manifest_(tmanifest) {
+    :   table_manifest_(tmanifest),
+        current_offset_(tmanifest.current_offset()) {
 }
 
 // table initialization for the firt time
@@ -128,7 +128,9 @@ bool Table::PutDisk(std::string& statement) {
     return true;
 }
 
+// When key is existed
 bool PutIndex(std::string& key, uint64_t timestamp, uint64_t offset) {
+    // if()
     return true;
 
 }

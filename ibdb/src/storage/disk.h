@@ -198,7 +198,7 @@ public:
     }
 
     Status Read(uint64_t offset, size_t n, Slice* const result) {
-        char* scratch;
+        char* scratch = nullptr;
         current_offset_ += n;
         return random_access_file_->Read(offset, n, result, scratch);
     }
@@ -250,7 +250,7 @@ public:
 private:
     std::string filename_;
     FILE* filestream_;
-    uint64_t offset_;
+    // uint64_t offset_;
     uint64_t current_offset_;
     int fd_;
     Limiter* limiter_;
@@ -259,7 +259,6 @@ private:
 
 RandomAccessFileHandle::RandomAccessFileHandle(std::string& filename)
     :   filename_(filename),
-        offset_(0),
         current_offset_(0) {
             filestream_ = fopen(filename.c_str(), "r+");
             assert(filestream_ != nullptr);
@@ -274,7 +273,6 @@ RandomAccessFileHandle::RandomAccessFileHandle(std::string& filename)
 
 RandomAccessFileHandle::RandomAccessFileHandle(std::string& filename, uint64_t offset)
     :   filename_(filename),
-        offset_(offset),
         current_offset_(offset) {
             filestream_ = fopen(filename.c_str(), "r+");
             assert(filestream_ != nullptr);

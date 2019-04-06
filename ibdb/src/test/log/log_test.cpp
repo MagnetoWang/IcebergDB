@@ -17,26 +17,26 @@ namespace log {
 
 // Construct a string of the specified length made out of the supplied
 // partial string.
-static std::string BigString(const std::string& partial_string, size_t n) {
-  std::string result;
-  while (result.size() < n) {
-    result.append(partial_string);
-  }
-  result.resize(n);
-  return result;
-}
+// static std::string BigString(const std::string& partial_string, size_t n) {
+//   std::string result;
+//   while (result.size() < n) {
+//     result.append(partial_string);
+//   }
+//   result.resize(n);
+//   return result;
+// }
 
 // Construct a string from a number
-static std::string NumberString(int n) {
-  char buf[50];
-  snprintf(buf, sizeof(buf), "%d.", n);
-  return std::string(buf);
-}
+// static std::string NumberString(int n) {
+//   char buf[50];
+//   snprintf(buf, sizeof(buf), "%d.", n);
+//   return std::string(buf);
+// }
 
 // Return a skewed potentially long string
-static std::string RandomSkewedString(int i, Random* rnd) {
-  return BigString(NumberString(i), rnd->Skewed(17));
-}
+// static std::string RandomSkewedString(int i, Random* rnd) {
+//   return BigString(NumberString(i), rnd->Skewed(17));
+// }
 
 class LogT {
 public:

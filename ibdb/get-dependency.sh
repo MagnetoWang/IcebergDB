@@ -216,21 +216,22 @@ else
     cd ${DEPS_SOURCE}
 fi
 
-if [ -d "protobuf" ];then
+#TODO 重新更改
+if [ -d "protobuf2.6" ];then
     echo "protocol is exist"
-    cd protobuf2.6
+    # cd protobuf2.6
     # ./autogen.sh
     # autoreconf -f -i -Wall,no-obsolete
-    export CPPFLAGS=-I${DEPS_PREFIX}/include
-    export LDFLAGS=-L${DEPS_PREFIX}/lib
+    # export CPPFLAGS=-I${DEPS_PREFIX}/include
+    # export LDFLAGS=-L${DEPS_PREFIX}/lib
     # ./configure $DEPS_CONFIG CXXFLAGS="-D_GLIBCXX_USE_CXX11_ABI=0"
     # make -j5
     # make install
-    cp -r src/.lib/. ${DEPS_PREFIX}/lib
-    cp -r src/.lib/protoc  ${DEPS_PREFIX}/bin
-    cp -r src/.lib/protoc  /usr/local/bin/protoc
-    cp -r src/.lib/. /usr/local/lib
-    cd ${DEPS_SOURCE}
+    # cp -r src/.lib/. ${DEPS_PREFIX}/lib
+    # cp -r src/.lib/protoc  ${DEPS_PREFIX}/bin
+    # cp -r src/.lib/protoc  /usr/local/bin/protoc
+    # cp -r src/.lib/. /usr/local/lib
+    # cd ${DEPS_SOURCE}
 else
     git clone -b v2.5.0 --depth 1 https://github.com/protocolbuffers/protobuf.git
     cd protobuf
@@ -271,16 +272,6 @@ fi
 
 if [ -d "brpc" ];then
     echo "brpc is exist"
-    cd brpc
-    # sh config_brpc.sh --headers=${DEPS_PREFIX}/include/brpc --libs=${DEPS_PREFIX}/lib --with-glog
-    sh config_brpc.sh --with-glog --headers=${DEPS_PREFIX}/include --libs=${DEPS_PREFIX}/lib
-    make -j5
-    cp -r output/bin/. ${DEPS_PREFIX}/bin
-    cp -r output/lib/. ${DEPS_PREFIX}/lib
-    mkdir -p ${DEPS_PREFIX}/include/brpc
-    cp -r output/include/. ${DEPS_PREFIX}/include/brpc
-    cd ..
-    cd ${DEPS_SOURCE}
 else
     # git clone --depth 1 https://github.com/apache/incubator-brpc.git
     cd incubator-brpc
@@ -293,6 +284,14 @@ else
     cd ..
     mv incubator-brpc brpc
     cd ${DEPS_SOURCE}
+fi
+
+if [ -d "zookeeper" ];then
+    echo "zookeeper is exist"
+else
+    curl -L -O https://mirrors.tuna.tsinghua.edu.cn/apache/zookeeper/stable/zookeeper-3.4.14.tar.gz
+    tar -zxvf zookeeper-3.4.14.tar.gz
+    mv zookeeper-3.4.14 zookeeper
 fi
 
 cd $ROOT_PATH

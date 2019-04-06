@@ -132,6 +132,9 @@ target_link_libraries(disk_test base log glog gtest gflags)
 add_executable(storage_test src/test/protobuf/storage_test.cpp src/flags.cc src/protobuf/storage.pb.cc)
 target_link_libraries(storage_test base log protocc protobuf pthread glog gtest gflags)
 
+add_executable(segment_test src/test/storage/segment_test.cpp)
+target_link_libraries(segment_test base log protocc protobuf pthread glog gtest gflags)
+
 add_executable(table_test src/test/storage/table_test.cpp)
 target_link_libraries(table_test base log protocc protobuf pthread glog gtest gflags)
 

@@ -48,7 +48,7 @@ public:
         filestream_(filestream),
         wf_(nullptr),
         writer_(nullptr) {
-            wf_ = ibdb::log::NewWritableFile(filename, filestream);
+            wf_ = ibdb::log::NewWritableFile(filename_, filestream_);
             writer_ = new IbdbWriter(wf_, dest_length);
         }
 
@@ -74,10 +74,10 @@ public:
     }
 
 private:
+    std::string filename_;
     FILE* filestream_;
     WritableFile* wf_;
     IbdbWriter* writer_;
-    std::string filename_;
 };
 
 //implementation
