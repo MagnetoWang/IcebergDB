@@ -54,8 +54,10 @@ TEST(SegmentTest, PutAndGet) {
     bool result = segment.Put(key, now_time, value, offset);
     ASSERT_EQ(result, true);
     uint64_t get_offset = 0;
-    // ASSERT_EQ(segment.Get(key, now_time, value, get_offset), true);
-    // ASSERT_EQ(get_offset, offset);
+    result = segment.Get(key, now_time, value, get_offset);
+    ASSERT_EQ(result, true);
+    ASSERT_EQ(get_offset, offset);
+    LOG(INFO) << get_offset;
 
 }
 

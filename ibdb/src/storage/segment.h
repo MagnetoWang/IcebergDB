@@ -187,8 +187,7 @@ bool Segment::Remove(const Slice& key) {
 bool Segment::BuildKeyIndex(const Slice& key) {
     if (!Contains(key)) {
         TimeStampComparator ts_cmp;
-        Arena arena;
-        ValueEntry* value_entry = new ValueEntry(ts_cmp, &arena);
+        ValueEntry* value_entry = new ValueEntry(ts_cmp, &arena_);
         segment_->Insert(key, value_entry);
         return true;
     } else {
@@ -198,15 +197,13 @@ bool Segment::BuildKeyIndex(const Slice& key) {
 
 ValueEntry* Segment::NewValueEntry() {
     TimeStampComparator ts_cmp;
-    Arena arena;
-    ValueEntry* value_entry = new ValueEntry(ts_cmp, &arena);
+    ValueEntry* value_entry = new ValueEntry(ts_cmp, &arena_);
     return value_entry;
 }
 
 Index* Segment::NewIndex() {
-    Arena arena;
     SliceComparator slice_cmp;
-    Index* index = new Index(slice_cmp, &arena);
+    Index* index = new Index(slice_cmp, &arena_);
     return index;
 }
 
@@ -224,14 +221,11 @@ Index* Segment::NewIndex() {
 bool Segment::Put(const Slice& key, const uint64_t timestamp, const Slice& value, const uint64_t offset) {
     //TODO 为什么不能通过build方法来insert value?并且出现了segmentation fault问题
     if (!Contains(key)) {
-        ValueEntry* value = NewValueEntry();
-        segment_->Insert(key, value);
+        // ValueEntry* value = NewValueEntry();
+        // segment_->Insert(key, value);
+        assert(BuildKeyIndex(key));
     }
-    // SkipList.Node* node = segment_->FindEqual(key);
-    // assert(node != nullptr);
     ValueEntry* value_entry =  segment_->FindEqual(key)->value();
-    // SegmentTimeStamp ts;
-    // ts.ts = timestamp;
     uint64_t ts = timestamp;
     if(!value_entry->Contains(ts)) {
         Index* index = NewIndex();
@@ -256,7 +250,7 @@ bool Segment::Get(const Slice& key, const uint64_t timestamp, const Slice& value
     }
     ValueEntry* value_entry = segment_->FindEqual(key)->value();
     uint64_t ts = timestamp;
-    if(!value_entry->Contains(timestamp)) {
+    if(!value_entry->Contains(ts)) {
         LOG(INFO) << "timestamp[" << timestamp <<"] is not existed";
         return false;
     }
