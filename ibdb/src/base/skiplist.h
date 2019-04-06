@@ -22,10 +22,9 @@ namespace ibdb {
 namespace base {
 
 template<typename Key, typename Value, class Comparator>
-class SkipList {
-private:
-    struct Node;
+class SkipList : Noncopyable {
 public:
+    struct Node;
     SkipList(Comparator cmp, Arena* arena);
     // ~SkipList();
     void Insert(const Key& key, Value& value);
@@ -100,7 +99,7 @@ private:
 // 结构体Node
 template<typename Key, typename Value, class Comparator>
 struct SkipList<Key, Value, Comparator>::Node {
-    Node(const Key& k, Value& v, uint8_t h) : key_(k), value_(v), height_(h) {}
+    Node(const Key& k, Value& v, uint8_t h) : height_(h), key_(k), value_(v) {}
     // Node(const Key& k, uint8_t h) : key_(k), height_(h) {}
     Node(uint8_t h) : height_(h), key_(), value_() {}
     // can't modify any type include pointer type
@@ -134,9 +133,9 @@ struct SkipList<Key, Value, Comparator>::Node {
     // or you will get nothing
     int height() const {return (int)height_;}
 private:
+    uint8_t height_;
     Key const key_;
     Value value_;
-    uint8_t height_;
     AtomicPointer next_[1];
     // std::atomic<Node* >* next_;
 };
@@ -160,7 +159,7 @@ SkipList<Key, Value, Comparator>::NewNode
         sizeof(Node) + sizeof(AtomicPointer) * (height - 1)// + sizeof(Value) + sizeof(uint8_t) + sizeof(Key)
     );
     
-    Node* x = new (mem)Node(key, value, height);
+    Node* x = new (mem)Node(key, value, (uint8_t)height);
     return x;
 }
 
@@ -171,7 +170,7 @@ SkipList<Key, Value, Comparator>::NewNode
     char* mem = arena_->AllocateAligned(
         sizeof(Node) + sizeof(AtomicPointer) * (height - 1)// + sizeof(Value) + sizeof(uint8_t) + sizeof(Key)
     );
-    return new (mem)Node(height);
+    return new (mem)Node((uint8_t)height);
 }
 
 // template<typename Key, typename Value, class Comparator>
