@@ -25,15 +25,8 @@ struct SegmentOffset {
     uint64_t offset;
 };
 
-class SegmentTimeStamp {
-public:
+struct SegmentTimeStamp {
     uint64_t ts;
-    SegmentTimeStamp() : ts(0) {}
-    ~SegmentTimeStamp() {}
-    SegmentTimeStamp(const SegmentTimeStamp& sts) : ts(sts.ts) {}
-    // SegmentTimeStamp(uint64_t timestamp) : ts(timestamp) {}
-    // SegmentTimeStamp(const SegmentTimeStamp&) = default;
-    SegmentTimeStamp& operator=(const SegmentTimeStamp&) = default;
 };
 
 class SliceComparator {
@@ -65,7 +58,7 @@ public:
 
 typedef Slice Feature;
 // typedef std::map<Slice, uint64_t> Index;
-typedef SkipList<Slice, SegmentOffset, SliceComparator> Index;
+typedef SkipList<Slice, uint64_t, SliceComparator> Index;
 typedef SkipList<uint64_t, Index*, TimeStampComparator>  ValueEntry;
 typedef SkipList<Slice, ValueEntry*, SliceComparator> Entries;
 // TODO 添加多线程互斥元
@@ -188,7 +181,10 @@ bool Segment::BuildKeyIndex(const Slice& key) {
     if (!Contains(key)) {
         TimeStampComparator ts_cmp;
         ValueEntry* value_entry = new ValueEntry(ts_cmp, &arena_);
-        segment_->Insert(key, value_entry);
+        char* data = new char[key.size()];
+        memcpy(data, key.data(), key.size());
+        Slice mem_key(data, key.size());
+        segment_->Insert(mem_key, value_entry);
         return true;
     } else {
         return false;
@@ -221,25 +217,30 @@ Index* Segment::NewIndex() {
 bool Segment::Put(const Slice& key, const uint64_t timestamp, const Slice& value, const uint64_t offset) {
     //TODO 为什么不能通过build方法来insert value?并且出现了segmentation fault问题
     if (!Contains(key)) {
-        // ValueEntry* value = NewValueEntry();
-        // segment_->Insert(key, value);
         assert(BuildKeyIndex(key));
     }
     ValueEntry* value_entry =  segment_->FindEqual(key)->value();
     uint64_t ts = timestamp;
     if(!value_entry->Contains(ts)) {
+        LOG(INFO) << "new Index timestamp[" << ts << "]";
         Index* index = NewIndex();
         value_entry->Insert(ts, index);
     }
     Index* index = value_entry->FindEqual(ts)->value();
     if(index->Contains(value)) {
-        LOG(INFO) << "value[" << value.data() <<"] is existed";
+        LOG(INFO) << "value[" << index->FindEqual(value)->value() <<"] is existed";
         return false;
     }
-    SegmentOffset segment_offset;
-    segment_offset.offset = offset;
-    index->Insert(value, segment_offset);
-    LOG(INFO) << "value[" << value.data() <<"] is put successed ";
+    uint64_t segment_offset = offset;
+    char* data = new char[value.size()];
+    memcpy(data, value.data(), value.size());
+    Slice new_value(data, value.size());
+
+    index->Insert(new_value, segment_offset);
+    LOG(INFO) << "Get key[" << key.data() 
+              <<"] timestamp[" << ts 
+              << "] value[" << new_value.data() 
+              << "] offset[" << segment_offset <<"] is put successfully";
     return true;
 }
 
@@ -259,7 +260,11 @@ bool Segment::Get(const Slice& key, const uint64_t timestamp, const Slice& value
         LOG(INFO) << "value[" << value.data() <<"] is not existed";
         return false;
     }
-    offset = index->FindEqual(value)->value().offset;
+    offset = index->FindEqual(value)->value();
+    LOG(INFO) << "Get key[" << key.data() 
+              <<"] timestamp[" << ts 
+              << "] value[" << value.data() 
+              << "] offset[" << offset <<"] is successed";
     return true;
 }
 

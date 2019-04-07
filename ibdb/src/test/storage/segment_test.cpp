@@ -43,13 +43,11 @@ TEST(SegmentTest, SegmentStruct) {
 
 TEST(SegmentTest, PutAndGet) {
     Segment segment(4);
-    // ibdb::base::GetMicrosecondsTimestamp();
-    // ibdb::base::GetSecondTimestamp();
-
     Slice key("name");
     uint64_t now_time = ibdb::base::GetMillisecondTimestamp();
     LOG(INFO) << now_time;
     Slice value("magneto");
+    // LOG(INFO) << strlen("magneto");
     uint64_t offset = 100;
     bool result = segment.Put(key, now_time, value, offset);
     ASSERT_EQ(result, true);
@@ -58,7 +56,66 @@ TEST(SegmentTest, PutAndGet) {
     ASSERT_EQ(result, true);
     ASSERT_EQ(get_offset, offset);
     LOG(INFO) << get_offset;
+}
 
+//check whether the data is in memory or not
+TEST(SegmentTest, MemPutAndGet) {
+    Segment segment(4);
+    Slice key("name");
+    uint64_t number = 5;
+    std::vector<std::string> value_list;
+    std::vector<uint64_t> ts_list;
+    uint64_t now_time = 0;
+    for (int i = 0; i < number; i++) {
+        std::string value_string = "value" + std::to_string(i);
+        Slice value(value_string);
+        value_list.push_back(value_string);
+        uint64_t offset = i;
+        // LOG(INFO) << value.data() << " now_time = " << now_time;
+        bool result = segment.Put(key, now_time, value, offset);
+        ASSERT_EQ(result, true);
+        offset = 10;
+        result = segment.Get(key, now_time, "value0", offset);
+        ASSERT_EQ(result, true);
+        ASSERT_EQ(0, offset);
+    }
+    // uint64_t now_time = i;
+    for (int i = 0; i < number; i++) {
+        
+        std::string value_string = "value" + std::to_string(now_time);
+        Slice value(value_string);
+        uint64_t get_offset = 0;
+        bool result = segment.Get(key, now_time, value, get_offset);
+        ASSERT_EQ(result, true);
+    }
+}
+
+// Put big data in segment and get all of data
+TEST(SegmentTest, BenPutAndGet) {
+    Segment segment(4);
+    Slice key("name");
+    uint64_t number = 100000;
+    for (int i = 0; i < number; i++) {
+        uint64_t now_time = i;
+        std::string value_string = "value" + std::to_string(i);
+        Slice value(value_string);
+        uint64_t offset = i;
+        bool result = segment.Put(key, now_time, value, offset);
+        ASSERT_EQ(result, true);
+        offset = 0;
+        result = segment.Get(key, now_time, value, offset);
+        ASSERT_EQ(result, true);
+        ASSERT_EQ(i, offset);
+    }
+    for (int i = 0; i < number; i++) {
+        uint64_t now_time = i;
+        std::string value_string = "value" + std::to_string(i);
+        Slice value(value_string);
+        uint64_t get_offset = 0;
+        bool result = segment.Get(key, now_time, value, get_offset);
+        ASSERT_EQ(result, true);
+        ASSERT_EQ(i, get_offset);
+    }
 }
 
 } // storage
