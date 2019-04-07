@@ -53,16 +53,17 @@ public:
         char* size_byte = new char[4];
         ibdb::base::EncodeFixed32(size_byte, slice.size());
         Slice* log_data = new Slice(offset_byte, 8);
-        Status s = Append(log_data);
+        Status s = Append(*log_data);
         if (!s.ok()) {
             return s;
         }
         log_data = new Slice(size_byte, 4);
-        s = Append(log_data);
+        s = Append(*log_data);
         if (!s.ok()) {
             return s;
         }
-        s = Append(slice);
+        log_data = new Slice(slice.data(), slice.size());
+        s = Append(*log_data);
         if (!s.ok()) {
             return s;
         }

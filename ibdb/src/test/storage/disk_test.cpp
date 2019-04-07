@@ -43,7 +43,7 @@ TEST(RandomAccessFileTest, CreateFileTest) {
 
 TEST(RandomAccessFileTest, ReadInternTest) {
     std::string filename("AAAReadInternTest.txt");
-    FILE* filestream = fopen(filename.c_str(), "a+r+");
+    FILE* filestream = fopen(filename.c_str(), "ab+r+");
     assert(filestream != nullptr);
 
     WritableFileHandle writer_handle(filename);
@@ -82,7 +82,10 @@ TEST(RandomAccessFileTest, ReadInternTest) {
 
 TEST(RandomAccessFileTest, ReadLogFormatTest) {
     std::string file("AAAReadLogFormatTest.txt");
-    FILE* filestream = fopen(file.c_str(), "rb+");
+    FILE* filestream = fopen(file.c_str(), "a+");
+    // filestream->close();
+    filestream = fopen(file.c_str(), "wrb+");
+
     ASSERT_NE(filestream, nullptr);
     // uint64_t number = 9000091212121;
     // LOG(INFO) << number;
@@ -94,39 +97,40 @@ TEST(RandomAccessFileTest, ReadLogFormatTest) {
         Slice* log_data;
         char* offset_byte = new char[8];
         char* size_byte = new char[4];
-        ibdb::base::EncodeFixed32(size_byte, message.size());
-        ibdb::base::EncodeFixed64(offset_byte, offset);
-        log_data = new Slice(offset_byte, 8);
-        writer_handle.Append(log_data);
-        log_data = new Slice(size_byte, 4);
-        writer_handle.Append(log_data);
+        // ibdb::base::EncodeFixed32(size_byte, message.size());
+        // ibdb::base::EncodeFixed64(offset_byte, i);
+        // ASSERT_EQ(ibdb::base::DecodeFixed32(size_byte), message.size());
+        // ASSERT_EQ(ibdb::base::DecodeFixed64(offset_byte), i);
+        // LOG(INFO) << message.size();
         log_data = new Slice(message);
-        writer_handle.Append(log_data);
+        writer_handle.Append(i, *log_data);
         offset.fetch_add(1, std::memory_order_relaxed);
     }
     writer_handle.Sync();
+    fclose(filestream);
+    filestream = fopen(file.c_str(), "rb+");
 
     int fd = fileno(filestream);
     // Slice* result = nullptr;
     int offset_size = 8;
     int message_length = 4;
-    char* scratch = (char*)malloc(sizeof(char) * offset_size);
+    char* scratch = nullptr;
     uint64_t file_offset = 0;
     Status status;
     for (int i = 0; i < 10; i++) {
+        scratch = new char[offset_size];
         ssize_t read_size = ::pread(fd, scratch, offset_size, static_cast<off_t>(file_offset));
-        file_offset += offset_size;
-        // ssize_t flag = 8;
-        // LOG(INFO) <<  read_size;
         // LOG(INFO) << ibdb::base::DecodeFixed64(scratch);
         ASSERT_EQ(ibdb::base::DecodeFixed64(scratch), i);
-        scratch = new char[4];
+        scratch = new char[message_length];
+        file_offset += offset_size;
         read_size = ::pread(fd, scratch, message_length, static_cast<off_t>(file_offset));
         // LOG(INFO) << ibdb::base::DecodeFixed32(scratch);
         ASSERT_EQ(ibdb::base::DecodeFixed32(scratch), 7);
         int message_size = ibdb::base::DecodeFixed32(scratch);
         file_offset += message_length;
         scratch = new char[message_size];
+        // LOG(INFO) << message_size;
         read_size = ::pread(fd, scratch, message_size, static_cast<off_t>(file_offset));
         // LOG(INFO) << scratch;
         file_offset += message_size;
@@ -173,9 +177,9 @@ inline Slice LogFormat(uint64_t offset, std::string& message, FILE* filestream) 
         ssize_t read_size = ::pread(fd, scratch, offset_size, static_cast<off_t>(file_offset));
         file_offset += offset_size;
         // ssize_t flag = 8;
-        LOG(INFO) <<  read_size;
+        // LOG(INFO) <<  read_size;
         // assert(read_size == flag);
-        LOG(INFO) << ibdb::base::DecodeFixed64(scratch);
+        // LOG(INFO) << ibdb::base::DecodeFixed64(scratch);
         scratch = new char[4];
         read_size = ::pread(fd, scratch, message_length, static_cast<off_t>(file_offset));
         // assert(read_size == 4);
@@ -185,7 +189,7 @@ inline Slice LogFormat(uint64_t offset, std::string& message, FILE* filestream) 
         scratch = new char[message_size];
         read_size = ::pread(fd, scratch, message_size, static_cast<off_t>(file_offset));
         // assert(read_size == message_size);
-        LOG(INFO) << scratch;
+        // LOG(INFO) << scratch;
         file_offset += message_size;
     }
     return *result;
@@ -193,7 +197,7 @@ inline Slice LogFormat(uint64_t offset, std::string& message, FILE* filestream) 
 
 TEST(WritableFileHandleTest, AppendLogFormatTest) {
     std::string file("AAAAppendLogFormatTest.txt");
-    FILE* filestream = fopen(file.c_str(), "rb+");
+    FILE* filestream = fopen(file.c_str(), "aw+");
     ASSERT_NE(filestream, nullptr);
     // uint64_t number = 9000091212121;
     // LOG(INFO) << number;
@@ -216,6 +220,8 @@ TEST(WritableFileHandleTest, AppendLogFormatTest) {
         offset.fetch_add(1, std::memory_order_relaxed);
     }
     writer_handle.Sync();
+    fclose(filestream);
+    filestream = fopen(file.c_str(), "r+");
 
     int fd = fileno(filestream);
     // Slice* result = nullptr;
@@ -246,7 +252,7 @@ TEST(WritableFileHandleTest, AppendLogFormatTest) {
 
 TEST(WritableFileHandleTest, AppendOffset) {
     std::string file("AAAAppendOffsetTest.txt");
-    FILE* filestream = fopen(file.c_str(), "rb+");
+    FILE* filestream = fopen(file.c_str(), "arb+");
     assert(filestream != nullptr);
 
     // char* offset_byte = new char[8];
@@ -265,7 +271,7 @@ TEST(WritableFileHandleTest, AppendOffset) {
     reader_handle.GetMessage(0, result);
     // ASSEERT_EQ(result->data(), "create");
     ASSERT_NE(result, nullptr);
-    LOG(INFO) << result->data();
+    // LOG(INFO) << result->data();
 }
 
 class RandomAccessFileHandleTest {};
