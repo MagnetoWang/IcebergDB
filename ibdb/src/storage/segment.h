@@ -176,7 +176,7 @@ bool Segment::Remove(const Slice& key) {
 
 // build key index 
 // but it is not timestamp index
-// TODO 局部函数会销毁valueEntry对象，后面在思考下如何解决
+// TODO 局部函数会销毁valueEntry对象，后面在思考下该如何解决
 bool Segment::BuildKeyIndex(const Slice& key) {
     if (!Contains(key)) {
         TimeStampComparator ts_cmp;
@@ -216,8 +216,12 @@ Index* Segment::NewIndex() {
 
 bool Segment::Put(const Slice& key, const uint64_t timestamp, const Slice& value, const uint64_t offset) {
     //TODO 为什么不能通过build方法来insert value?并且出现了segmentation fault问题
+    // 假设key应该存在，如果不存在应该报错误。不能把随意建立索引
+    // 建立索引的权利交给使用者才行！
     if (!Contains(key)) {
-        assert(BuildKeyIndex(key));
+        LOG(INFO) << "key[" << key.data() << "] is not existed";
+        return false;
+        // assert(BuildKeyIndex(key));
     }
     ValueEntry* value_entry =  segment_->FindEqual(key)->value();
     uint64_t ts = timestamp;

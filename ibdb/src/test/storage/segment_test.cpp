@@ -44,6 +44,8 @@ TEST(SegmentTest, SegmentStruct) {
 TEST(SegmentTest, PutAndGet) {
     Segment segment(4);
     Slice key("name");
+    segment.BuildKeyIndex(key);
+    ASSERT_EQ(segment.Contains(key), true);
     uint64_t now_time = ibdb::base::GetMillisecondTimestamp();
     LOG(INFO) << now_time;
     Slice value("magneto");
@@ -62,6 +64,8 @@ TEST(SegmentTest, PutAndGet) {
 TEST(SegmentTest, MemPutAndGet) {
     Segment segment(4);
     Slice key("name");
+    segment.BuildKeyIndex(key);
+    ASSERT_EQ(segment.Contains(key), true);
     uint64_t number = 5;
     std::vector<std::string> value_list;
     std::vector<uint64_t> ts_list;
@@ -94,6 +98,8 @@ TEST(SegmentTest, MemPutAndGet) {
 TEST(SegmentTest, BenPutAndGet) {
     Segment segment(4);
     Slice key("name");
+    segment.BuildKeyIndex(key);
+    ASSERT_EQ(segment.Contains(key), true);
     uint64_t number = 100000;
     for (int i = 0; i < number; i++) {
         uint64_t now_time = i;

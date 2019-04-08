@@ -83,7 +83,6 @@ static inline bool IsVisible(char c) {
 
 // make folder in current path 
 inline static bool Mkdir(const std::string& path) {
-
     const int dir_mode = 0777;
     int ret = ::mkdir(path.c_str(), dir_mode); 
     if (ret == 0 || errno == EEXIST) {
@@ -117,7 +116,6 @@ inline bool is_zero(const char* buff, const size_t size) {
 
 // create multiple folders. Format is likely /tmp/db/log
 static inline bool MkdirRecur(const std::string& dir_path) {
-
     size_t beg = 0;
     size_t seg = dir_path.find('/', beg);
     while (seg != std::string::npos) {
