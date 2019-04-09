@@ -24,6 +24,7 @@ using ibdb::log::Limiter;
 using ibdb::base::Status;
 
 DECLARE_uint64(limiter_max_required);
+DECLARE_uint32(log_index_sparse_threshold);
 namespace ibdb {
 namespace storage {
 
@@ -197,13 +198,26 @@ public:
             filestream_ = nullptr;
         }
     }
-
+    // read n byte from the offset position of file
     Status Read(uint64_t offset, size_t n, Slice* const result) {
         char* scratch = nullptr;
-        current_offset_ += n;
+        current_offset_ = offset + n;
         return random_access_file_->Read(offset, n, result, scratch);
     }
-
+    // read message's offset from the offset position of file
+    Status GetMessageOffset(uint64_t offset, utint64_t& resutl) {
+        int offset_length = 8;
+        char* scratch = new char[8];
+        ssize_t read_size = ::pread(fd_, scratch, offset_length, static_cast<off_t>(offset));
+        if (read_size != 8) {
+            Slice io_error("read_size is not equal offset_length");
+            LOG(ERROR) << io_error.data();
+            return Status::IOError(io_error);
+        }
+        result = ibdb::base::DecodeFixed64(scratch);
+        return Status::OK();
+    }
+    // read message from the offset position of file
     Status GetMessage(uint64_t offset, Slice* const result) {
         int offset_length = 8;
         int message_length = 4;
@@ -228,8 +242,8 @@ public:
         *result = Slice(scratch, message_size);
         return Status::OK();
     }
-
-    Status GetMessageSize(uint64_t offset, int result) {
+    // read message size from the offset position of file
+    Status GetMessageSize(uint64_t offset, uint32_t& result) {
         int offset_length = 8;
         int message_length = 4;
         char* scratch = new char[4];
@@ -283,6 +297,13 @@ RandomAccessFileHandle::RandomAccessFileHandle(std::string& filename, uint64_t o
             random_access_file_ = ibdb::log::NewRandomAccessFile(filename_, fd_, limiter_);
             assert(random_access_file_ != nullptr);
         }
+
+// class DiskHandler {
+// public:
+
+// private:
+//     RandomAccessFileHandle
+// }
 
 } // ibdb
 } // storage

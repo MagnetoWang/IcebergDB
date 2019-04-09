@@ -275,7 +275,7 @@ TEST(WritableFileHandleTest, AppendOffset) {
 }
 
 class RandomAccessFileHandleTest {};
-
+// TODO 完成随机读测试代码
 TEST(RandomAccessFileHandleTest, GetMessage) {
 
 }
