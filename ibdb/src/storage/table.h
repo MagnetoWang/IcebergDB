@@ -295,14 +295,18 @@ bool Table::FindMessage(uint64_t& offset, uint64_t& start_offset, uint32_t& pos,
         uint64_t message_offset = 0;
         Status s = rf_->GetMessageOffset(pos, message_offset);
         if (!s.ok()) {
-            LOG(INFO) << "get start_offset[" << start_offset << "] is failed";
+            LOG(ERROR) << "get start_offset[" << start_offset << "] is failed";
             return false;
+        }
+        if (start_offset != message_offset) {
+            LOG(ERROR) << start_offset;
+            LOG(ERROR) << message_offset;
         }
         assert(start_offset == message_offset);
         if (offset == message_offset) {
             s = rf_->GetMessage(pos, message);
             if (!s.ok()) {
-                LOG(INFO) << "get message[" << message->data() << "] is failed";
+                LOG(ERROR) << "get message[" << message->data() << "] is failed";
                 return false;
             }
             break;
@@ -314,12 +318,13 @@ bool Table::FindMessage(uint64_t& offset, uint64_t& start_offset, uint32_t& pos,
         uint32_t message_size = 0;
         s = rf_->GetMessageSize(pos, message_size);
         if (!s.ok()) {
-             LOG(INFO) << "get message_size[" << message_size << "] is failed";
+             LOG(ERROR) << "get message_size[" << message_size << "] is failed";
             return false;
         }
         pos = pos + 12 + message_size;
         start_offset++;
     }
+    LOG(INFO) << "get message is successed message[" << message->data() << "]";
     *result = Slice(message->data(), message->size());
     return true;
 }

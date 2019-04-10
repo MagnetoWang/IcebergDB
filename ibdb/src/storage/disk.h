@@ -224,13 +224,14 @@ public:
         char* scratch = new char[4];
         offset += offset_length;
         ssize_t read_size = ::pread(fd_, scratch, message_length, static_cast<off_t>(offset));
-        if (read_size != 4) {
+        if (read_size != message_length) {
             Slice io_error("read_size is not equal message_length");
             LOG(ERROR) << io_error.data();
             return Status::IOError(io_error);
         }
         int message_size = ibdb::base::DecodeFixed32(scratch);
-        scratch = new char[message_size];
+        LOG(INFO) << "message size is " << message_size;
+        scratch = new char[message_size + 1];
         offset += message_length;
         read_size = ::pread(fd_, scratch, message_size, static_cast<off_t>(offset));
         if (read_size != message_size) {
@@ -238,7 +239,8 @@ public:
             LOG(ERROR) << io_error.data();
             return Status::IOError(io_error);
         }
-        
+        scratch[message_size] = '\0';
+        LOG(INFO) << "get message is successed message[" << scratch << "]";
         *result = Slice(scratch, message_size);
         return Status::OK();
     }

@@ -323,7 +323,8 @@ public:
 
         Status status;
         ssize_t read_size = ::pread(fd, scratch, n, static_cast<off_t>(offset));
-        *result = Slice(scratch, (read_size < 0) ? 0 : read_size);
+        assert(read_size == n);
+        *result = Slice(scratch, (read_size < 0) ? 0 : n);
         if (read_size < 0) {
             // An error: return a non-ok status.
             status = UnixError(filename_, errno);

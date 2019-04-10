@@ -106,8 +106,10 @@ TEST(TableTest, PutAndGet) {
     timestamp->set_is_key(false);
     Table table(table_name, schema);
 
-    int number = 10;
+    int number = 1000;
     std::string insert("insert");
+    std::vector<std::string> insert_vec;
+    insert_vec.reserve(number);
     insert = insert + " " + table_name + " name,id,gender,province,timestamp "; 
     for (int i = 0; i < number; i++) {
         std::string name_str = "name" + std::to_string(i);
@@ -121,9 +123,10 @@ TEST(TableTest, PutAndGet) {
         std::string statement;
         statement = insert + name_str + "," + id_str + "," + gender_str + "," + province_str + "," + timestamp_str;
         // LOG(ERROR) << statement;
-        LOG(ERROR) << statement;
+        // LOG(ERROR) << statement;
         bool result = table.Put(statement);
         ASSERT_EQ(result, true);
+        insert_vec.push_back(statement);
     }
     std::string table_get("get");
     table_get = table_get + " " + table_name + " id ";
@@ -135,8 +138,8 @@ TEST(TableTest, PutAndGet) {
         std::string message;
         bool result = table.Get(statement, message);
         ASSERT_EQ(result, true);
-        LOG(ERROR) << message;
-        // ASSERT_EQ()
+        ASSERT_EQ(insert_vec.at(i).size(), message.size());
+        ASSERT_EQ(insert_vec.at(i), message);
     }
 }
 
