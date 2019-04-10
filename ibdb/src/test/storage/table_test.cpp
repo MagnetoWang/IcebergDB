@@ -44,18 +44,101 @@ TEST(TableTest, ReadManifest) {
 
 }
 
+// TODO 这块逻辑不对啊，没有assert判断语句
 TEST(TableTest, PutDisk) {
     std::string table_name("PutDisk");
     Schema schema;
-    Field field;
-    field.set_name("name");
-    field.set_type("string");
-    field.set_is_key(true);
+    Field* name = schema.add_field();
+    Field* id = schema.add_field();
+    Field* gender = schema.add_field();
+    Field* province = schema.add_field();
+    Field* timestamp = schema.add_field();
+
+    name->set_name("name");
+    name->set_type("string");
+    name->set_is_key(true);
+    id->set_name("id");
+    id->set_type("uint64_t");
+    id->set_is_key(true);
+    gender->set_name("gender");
+    gender->set_type("string");
+    gender->set_is_key(false);
+    province->set_name("province");
+    province->set_type("string");
+    province->set_is_key(false);
+    timestamp->set_name("timestamp");
+    timestamp->set_type("uint64_t");
+    timestamp->set_is_key(false);
     Table table(table_name, schema);
+
     std::string insert("insert PutDisk name magnetowang ");
     table.PutDisk(insert);
 }
 
+TEST(TableTest, PutIndex) {
+    std::string table_name("PutIndex");
+    Schema schema;
+}
+
+TEST(TableTest, PutAndGet) {
+    std::string table_name("PutAndGet");
+    Schema schema;
+    Field* name = schema.add_field();
+    Field* id = schema.add_field();
+    Field* gender = schema.add_field();
+    Field* province = schema.add_field();
+    Field* timestamp = schema.add_field();
+
+    name->set_name("name");
+    name->set_type("string");
+    name->set_is_key(true);
+    id->set_name("id");
+    id->set_type("uint64_t");
+    id->set_is_key(true);
+    gender->set_name("gender");
+    gender->set_type("string");
+    gender->set_is_key(false);
+    province->set_name("province");
+    province->set_type("string");
+    province->set_is_key(false);
+    timestamp->set_name("timestamp");
+    timestamp->set_type("uint64_t");
+    timestamp->set_is_key(false);
+    Table table(table_name, schema);
+
+    int number = 10;
+    std::string insert("insert");
+    insert = insert + " " + table_name + " name,id,gender,province,timestamp "; 
+    for (int i = 0; i < number; i++) {
+        std::string name_str = "name" + std::to_string(i);
+        std::string id_str = "id" + std::to_string(i);
+        std::string gender_str("male");
+        if (i % 2 == 0) {
+            gender_str = "female";
+        }
+        std::string province_str("beijing");
+        std::string timestamp_str(std::to_string(i));
+        std::string statement;
+        statement = insert + name_str + "," + id_str + "," + gender_str + "," + province_str + "," + timestamp_str;
+        // LOG(ERROR) << statement;
+        LOG(ERROR) << statement;
+        bool result = table.Put(statement);
+        ASSERT_EQ(result, true);
+    }
+    std::string table_get("get");
+    table_get = table_get + " " + table_name + " id ";
+    for (int i = number -1 ; i >= 0; i--) {
+        std::string id_str = "id" + std::to_string(i);
+        std::string timestamp_str(std::to_string(i));
+        std::string statement;
+        statement = table_get + id_str + " " + timestamp_str;
+        std::string message;
+        bool result = table.Get(statement, message);
+        ASSERT_EQ(result, true);
+        LOG(ERROR) << message;
+        // ASSERT_EQ()
+    }
+}
 
 } // storage
 } // ibdb
