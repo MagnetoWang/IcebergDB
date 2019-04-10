@@ -16,7 +16,7 @@ DEFINE_string(log_dir_fatal, "/Users/magnetowang/Documents/GitHub/IcebergDB/ibdb
 
 //log
 DEFINE_uint64(limiter_max_required, 100, "limiter_max_required in log/format.h");
-DEFINE_uint32(log_index_sparse_threshold, 100, "insert offset-position to map every 100 offset");
+DEFINE_uint32(log_index_sparse_threshold, 1, "insert offset-position to map every 100 offset");
 
 //table dir
 DEFINE_string(db_root, "ibdb/db", "config db's log which store key and value");

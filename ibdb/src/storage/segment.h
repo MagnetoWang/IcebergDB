@@ -187,6 +187,7 @@ bool Segment::BuildKeyIndex(const Slice& key) {
         segment_->Insert(mem_key, value_entry);
         return true;
     } else {
+        LOG(ERROR) << "key is exitsted key[" << key.data() << "]";
         return false;
     }
 }
@@ -241,7 +242,7 @@ bool Segment::Put(const Slice& key, const uint64_t timestamp, const Slice& value
     Slice new_value(data, value.size());
 
     index->Insert(new_value, segment_offset);
-    LOG(INFO) << "Get key[" << key.data() 
+    LOG(INFO) << "key[" << key.data() 
               <<"] timestamp[" << ts 
               << "] value[" << new_value.data() 
               << "] offset[" << segment_offset <<"] is put successfully";

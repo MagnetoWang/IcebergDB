@@ -205,7 +205,7 @@ public:
         return random_access_file_->Read(offset, n, result, scratch);
     }
     // read message's offset from the offset position of file
-    Status GetMessageOffset(uint64_t offset, utint64_t& resutl) {
+    Status GetMessageOffset(uint64_t offset, uint64_t& result) {
         int offset_length = 8;
         char* scratch = new char[8];
         ssize_t read_size = ::pread(fd_, scratch, offset_length, static_cast<off_t>(offset));
