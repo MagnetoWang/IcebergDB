@@ -1,0 +1,80 @@
+syntax="proto2";
+package ibdb.rpc;
+import "storage.proto";
+
+option cc_generic_services = true;
+option java_generic_services = true;
+
+message TabletManifest {
+    // save all of table infomation
+    repeated ibdb.storage.TableManifest table_manifest = 1;
+    required string ip = 2;
+    required string port = 3;
+
+}
+
+message TabletRequest {
+    required string statemnet = 1;
+}
+
+message TabletResponse {
+    required uint32 code = 1;
+    required string msg = 2;
+}
+
+message CreateRequest {
+    required string statemnet = 1;
+}
+
+message CreateResponse {
+    required uint32 code = 1;
+    required string msg = 2;
+}
+
+message PutRequest {
+    required string statemnet = 1;
+    required string table_name = 2;
+}
+
+message PutResponse {
+    required uint32 code = 1;
+    required string msg = 2;
+}
+
+message GetRequest {
+    required string statemnet = 1;
+    required string table_name = 2;
+}
+
+message GetResponse {
+    required uint32 code = 1;
+    required string msg = 2;
+}
+
+message DeleteRequest {
+    required string statemnet = 1;
+    required string table_name = 2;
+}
+
+message DeleteResponse {
+    required uint32 code = 1;
+    required string msg = 2;
+}
+
+message UpdateRequest {
+    required string statemnet = 1;
+    required string table_name = 2;
+}
+
+message UpdateResponse {
+    required uint32 code = 1;
+    required string msg = 2;
+}
+
+service TabletService {
+    rpc Create(CreateRequest) returns (CreateResponse);
+    rpc Put(PutRequest) returns (PutResponse);
+    rpc Get(GetRequest) returns (GetResponse);
+    rpc Delete (DeleteRequest) returns (DeleteResponse);
+    rpc Update(UpdateRequest) returns (UpdateResponse);
+}
