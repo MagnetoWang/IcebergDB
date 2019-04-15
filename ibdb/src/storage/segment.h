@@ -1,3 +1,10 @@
+/*
+ * @Author: MagnetoWang 
+ * @Date: 2019-04-15 15:04:14 
+ * @Last Modified by:   MagnetoWang 
+ * @Last Modified time: 2019-04-15 15:04:14 
+ */
+
 #ifndef IBDB_STORAGE_SEGMENT_H
 #define IBDB_STORAGE_SEGMENT_H
 #include <mutex>

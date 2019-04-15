@@ -1,3 +1,9 @@
+/*
+ * @Author: MagnetoWang 
+ * @Date: 2019-04-15 15:03:29 
+ * @Last Modified by: MagnetoWang
+ * @Last Modified time: 2019-04-15 15:03:50
+ */
 #ifndef IBDB_STORAGE_TABLE_H
 #define IBDB_STORAGE_TABLE_H
 #include <atomic>
