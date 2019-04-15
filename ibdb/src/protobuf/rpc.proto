@@ -8,8 +8,8 @@ option java_generic_services = true;
 message TabletManifest {
     // save all of table infomation
     repeated ibdb.storage.TableManifest table_manifest = 1;
-    required string ip = 2;
-    required string port = 3;
+    required string endpoint = 2;
+    required bool is_leader = 3;
 
 }
 

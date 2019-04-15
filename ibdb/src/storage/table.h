@@ -30,13 +30,14 @@ namespace storage {
 
 // Default parameters are legal
 // TODO table不能重复创建！！
-class Table : Noncopyable {
+class Table {
 
 public:
     // Table();
     Table(const std::string& table_name, const Schema& schema);
     explicit Table(const TableManifest& tmanifest);
     ~Table() {};
+    // TODO 添加const限定词
     bool PutDisk(std::string& statement);
     bool PutIndex(std::string& key, uint64_t& timestamp, std::string& value, uint64_t& offset);
     bool Put(std::string& statement);
@@ -45,6 +46,7 @@ public:
     bool FindMessage(uint64_t& offset, uint64_t& start_offset, uint32_t& pos, std::string& file, Slice* const result);
     bool Delete();
     std::string GetTableManifestString();
+    TableManifest& GetTableManifest();
 
 private:
     // store all of table's information
@@ -81,7 +83,6 @@ Table::Table(const std::string& table_name, const Schema& schema) : current_offs
     ibdb::base::MkdirRecur(log_dir);
     table_manifest_.set_name(table_name);
     table_manifest_.set_current_offset(0);
-
     // segment initialization
     segment_index_ = new Segment(4);
     Schema* schema_tmp = table_manifest_.mutable_schema();
@@ -118,7 +119,7 @@ Table::Table(const std::string& table_name, const Schema& schema) : current_offs
     table_stream.close();
 }
 
-// 
+//
 bool Table::PutDisk(std::string& statement) {
     Slice message(statement);
     uint32_t current_pos = wf_->GetCurrentPos();
@@ -139,7 +140,7 @@ bool Table::PutDisk(std::string& statement) {
         if (it != offset_pos_map_.end()) {
             std::map<uint64_t, uint32_t>& offset_pos = offset_pos_map_.at(current_file);
             // TODO 不能有重复或者更新current_offset_,这里要有if判断
-           offset_pos.insert(std::make_pair(current_offset, current_pos));
+            offset_pos.insert(std::make_pair(current_offset, current_pos));
         } else {
             std::map<uint64_t, uint32_t> offset_pos;
             offset_pos.insert(std::make_pair(current_offset, current_pos));
@@ -162,6 +163,10 @@ bool Table::PutIndex(std::string& key, uint64_t& timestamp, std::string& value, 
 
 std::string Table::GetTableManifestString() {
     return table_manifest_.SerializeAsString();
+}
+
+TableManifest& Table::GetTableManifest() {
+    return table_manifest_;
 }
 
 // insert table_name key,key,key value,value,value
