@@ -26,7 +26,14 @@ inline const bool IsLittleEndian() {
 
 static const bool kLittleEndian = IsLittleEndian();
 
+static enum RpcCode {
+    OK = 0,
+    ERROR_CANT_CONNECTION,
+    ERROR_NOT_FOUND
 }
-}
+
+} // port
+} // ibdb
+
 
 #endif // IBDB_PORT_PORT_H
