@@ -12,6 +12,7 @@ typedef unsigned char         uint8_t;
 typedef unsigned short        uint16_t;
 typedef unsigned int          uint32_t;
 typedef unsigned long long    uint64_t;
+
 namespace ibdb {
 namespace port {
 
@@ -26,11 +27,12 @@ inline const bool IsLittleEndian() {
 
 static const bool kLittleEndian = IsLittleEndian();
 
-static enum RpcCode {
+enum RpcCode {
     OK = 0,
     ERROR_CANT_CONNECTION,
-    ERROR_NOT_FOUND
-}
+    ERROR_NOT_FOUND,
+    ERROR_TABLE_DUPLICATE
+};
 
 } // port
 } // ibdb
