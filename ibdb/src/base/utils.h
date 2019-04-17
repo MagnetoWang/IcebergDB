@@ -1,8 +1,8 @@
 /*
  * @Author: MagnetoWang 
  * @Date: 2019-03-29 09:51:05 
- * @Last Modified by:   MagnetoWang 
- * @Last Modified time: 2019-03-29 09:51:05 
+ * @Last Modified by: MagnetoWang
+ * @Last Modified time: 2019-04-16 15:57:22
  */
 #ifndef IBDB_BASE_UTILS_H
 #define IBDB_BASE_UTILS_H
@@ -164,6 +164,11 @@ static inline uint64_t GetSecondTimestamp() {
     auto now = std::chrono::system_clock::now();
     uint64_t ts = (uint64_t)std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
     return ts;
+}
+
+// input microsecond
+static inline void sleep(uint64_t micro_second) {
+    usleep(micro_second);
 }
 
 } // base
