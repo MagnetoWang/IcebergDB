@@ -19,7 +19,9 @@ public:
     }
     typename std::map<Key, Value>::iterator Find(Key& key) {
         auto it = cache_map_.find(key);
-        if (it != cache_map_.end());
+        if (it == cache_map_.end()) {
+            return cache_map_.end();
+        }
         return it;
     }
     void Remove(Key& key) {
