@@ -14,7 +14,7 @@ message TabletManifest {
 }
 
 message TabletRequest {
-    required string statemnet = 1;
+    required string statement = 1;
 }
 
 message TabletResponse {
@@ -23,7 +23,7 @@ message TabletResponse {
 }
 
 message CreateRequest {
-    required string statemnet = 1;
+    required string statement = 1;
 }
 
 message CreateResponse {
@@ -32,7 +32,7 @@ message CreateResponse {
 }
 
 message PutRequest {
-    required string statemnet = 1;
+    required string statement = 1;
     required string table_name = 2;
 }
 
@@ -42,7 +42,7 @@ message PutResponse {
 }
 
 message GetRequest {
-    required string statemnet = 1;
+    required string statement = 1;
     required string table_name = 2;
 }
 
@@ -52,7 +52,7 @@ message GetResponse {
 }
 
 message DeleteRequest {
-    required string statemnet = 1;
+    required string statement = 1;
     required string table_name = 2;
 }
 
@@ -62,7 +62,7 @@ message DeleteResponse {
 }
 
 message UpdateRequest {
-    required string statemnet = 1;
+    required string statement = 1;
     required string table_name = 2;
 }
 

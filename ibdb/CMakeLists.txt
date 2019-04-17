@@ -46,7 +46,7 @@ link_directories(third-party/lib)
 
 add_library(base src/base/arena.cpp src/base/crc32c.cpp src/flags.cc)
 add_library(log src/log/format.cpp src/log/log_reader.cpp src/log/log_writer.cpp)
-add_library(protocc STATIC src/protobuf/storage.pb.cc)
+add_library(protocc STATIC src/protobuf/storage.pb.cc src/protobuf/rpc.pb.cc)
 add_library(storage src/storage/table.cpp)
 # set_target_properties(libarena PROPERTIES OUTPUT_NAME "arena")
 # add_library(skiplist src/base/skiplist.cpp)
@@ -140,9 +140,16 @@ target_link_libraries(table_test base log protocc protobuf pthread glog gtest gf
 
 add_executable(brpc_test src/test/brpc_test.cpp)
 target_link_libraries(brpc_test base log protocc protobuf pthread glog gtest gflags brpc)
+
+add_executable(tablet_test src/test/tablet/tablet_test.cpp)
+target_link_libraries(tablet_test base log protocc protobuf pthread glog gtest gflags brpc)
+
+add_executable(server_test src/test/client/server_test.cpp)
+target_link_libraries(server_test base log protocc protobuf pthread glog gtest gflags brpc)
+
+add_executable(client_rpc src/test/client/client_rpc.cpp)
+target_link_libraries(client_rpc base log protocc protobuf pthread glog gtest gflags brpc)
+
 # -------------------------------------
 
 message(${PROJECT_SOURCE_DIR})
-
-
-

@@ -2,7 +2,7 @@
  * @Author: MagnetoWang 
  * @Date: 2019-04-12 21:22:21 
  * @Last Modified by: MagnetoWang
- * @Last Modified time: 2019-04-15 14:36:30
+ * @Last Modified time: 2019-04-15 16:07:23
  */
 
 #ifndef IBDB_TABLET_TABLET_H
@@ -59,6 +59,7 @@ Tablet::Tablet(const ibdb::rpc::TabletManifest& tablet_manifest) {
     is_leader_ = tablet_manifest_->is_leader();
 }
 
+// you must be invoke Init() after invoking Tablet()
 bool Tablet::Init() {
     // if (endpoint_ == nullptr) {
     //     return false;
@@ -72,7 +73,7 @@ bool Tablet::Init() {
 // create table_name ts_name,uint_64,isIndex col_name,type,isIndex  col_name,type,isIndex
 // assume request is vaild
 bool Tablet::Create(::ibdb::rpc::CreateRequest* const request, ::ibdb::rpc::CreateResponse* const response) {
-    std::string statement = request->statemnet();
+    std::string statement = request->statement();
     std::string delim(" ");
     std::vector<std::string> result;
     ibdb::base::SplitString(statement, delim, &result);
@@ -105,43 +106,48 @@ bool Tablet::Create(::ibdb::rpc::CreateRequest* const request, ::ibdb::rpc::Crea
 // insert table_name key,key,key value,value,value
 // TODO 判断输入参数是否正确
 bool Tablet::Put(::ibdb::rpc::PutRequest* const request, ::ibdb::rpc::PutResponse* const response) {
-    std::string statement = request->statemnet();
+    std::string statement = request->statement();
     std::string delim(" ");
     std::vector<std::string> result;
     ibdb::base::SplitString(statement, delim, &result);
+    RpcCode code = RpcCode::OK;
     // 加锁，访问类变量
     std::lock_guard<std::mutex> lock(mu_);
-    auto iterator = table_map_.fine(result.at(1);
+    auto iterator = table_map_.find(result.at(1));
     if (iterator == table_map_.end()) {
+        response->set_msg("put ok");
+        response->set_code(code);
         return false;
     }
-    std::shared_ptr<Table> table = iterator.second;
+    std::shared_ptr<Table> table = iterator->second;
     table->Put(statement);
+    response->set_msg("put ok");
+    response->set_code(code);
     return true;
 }
 
 // get table_name key value timestamp
 // TODO 判断输入参数是否正确
 bool Tablet::Get(::ibdb::rpc::GetRequest* const request, ::ibdb::rpc::GetResponse* const response) {
-    std::string statement = request->statemnet();
+    std::string statement = request->statement();
     std::string delim(" ");
     std::vector<std::string> result;
     ibdb::base::SplitString(statement, delim, &result);
     // 加锁，访问类变量
     std::lock_guard<std::mutex> lock(mu_);
-    auto iterator = table_map_.fine(result.at(1);
+    auto iterator = table_map_.find(result.at(1));
     RpcCode code = RpcCode::OK;
     if (iterator == table_map_.end()) {
         code = RpcCode::ERROR_NOT_FOUND;
-        response->set_msg(message);
-        reponse->set_code(code);
+        response->set_msg("table is not found");
+        response->set_code(code);
         return false;
     }
-    std::shared_ptr<Table> table = iterator.second;
+    std::shared_ptr<Table> table = iterator->second;
     std::string message;
     table->Get(statement, message);
     response->set_msg(message);
-    reponse->set_code(code);
+    response->set_code(code);
     return true;
 }
 
