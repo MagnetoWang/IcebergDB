@@ -29,6 +29,7 @@ static const bool kLittleEndian = IsLittleEndian();
 
 enum RpcCode {
     OK = 0,
+    FAILED,
     ERROR_CANT_CONNECTION,
     ERROR_NOT_FOUND,
     ERROR_TABLE_DUPLICATE
