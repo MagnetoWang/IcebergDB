@@ -15,6 +15,8 @@
 #include "gflags/gflags.h"
 
 using ibdb::base::Noncopyable;
+using ibdb::port::RpcCode;
+
 DECLARE_int32(timeout_ms);
 DECLARE_int32(max_retry);
 
@@ -80,10 +82,10 @@ void RpcClient<Stub>::SendRequest(void(Stub::*function)(::google::protobuf::RpcC
     cntl.set_max_retry(max_retry);
     (service_stub_->*function)(&cntl, request, response, nullptr);
     if (cntl.Failed()) {
-        LOG(ERROR) << "send request is wrong";
+//        LOG(ERROR) << "send request is wrong";
         LOG(ERROR) << cntl.ErrorText();
         response->set_msg("send request is wrong");
-        response->set_code(2);
+        response->set_code(RpcCode::FAILED);
     }
 }
 
