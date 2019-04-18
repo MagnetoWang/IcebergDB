@@ -2,7 +2,7 @@
  * @Author: MagnetoWang 
  * @Date: 2019-04-12 22:40:44 
  * @Last Modified by: MagnetoWang
- * @Last Modified time: 2019-04-17 12:34:59
+ * @Last Modified time: 2019-04-17 14:46:10
  */
 
 #ifndef IBDB_CLUSTER_TABLET_NODE_H
@@ -18,6 +18,7 @@ using ibdb::base::Noncopyable;
 using ibdb::tablet::Tablet;
 using ibdb::client::RpcClient;
 using ibdb::rpc::TabletService;
+using ibdb::port::RpcCode;
 
 namespace ibdb {
 namespace cluster {
@@ -27,6 +28,7 @@ class TabletNode : public TabletService {
 public:
     TabletNode(std::string& endpoint, bool is_leader);
     ~TabletNode();
+    bool Init();
     void Create(::google::protobuf::RpcController* controller,
                        const ::ibdb::rpc::CreateRequest* request,
                        ::ibdb::rpc::CreateResponse* response,
@@ -53,6 +55,7 @@ private:
     std::string endpoint_;
     std::atomic<bool> is_leader_;
     std::shared_ptr<Tablet> tablet_;
+    // std::map<std::string, std::shared_ptr<Tablet>> table_tablet_;
     // RpcClient<TabletService> client_;
 };
 
@@ -65,13 +68,22 @@ TabletNode::~TabletNode() {
 
 }
 
+bool TabletNode::Init() {
+
+}
+
 void TabletNode::Create(::google::protobuf::RpcController* controller,
                     const ::ibdb::rpc::CreateRequest* request,
                     ::ibdb::rpc::CreateResponse* response,
                     ::google::protobuf::Closure* done) {
     brpc::ClosureGuard done_guard(done);
-    response->set_msg(request->statement());
-    response->set_code(0);
+    if (!tablet->Create(request, response)) {
+        response->set_msg("failed to create table[" + request->table_name() + "]");
+        response->set_code(RpcCode::FAILED);
+        LOG(ERROR) << response->msg();
+        return;
+    }
+    return;
     // done->Run();
 }
 
@@ -79,16 +91,21 @@ void TabletNode::Put(::google::protobuf::RpcController* controller,
                     const ::ibdb::rpc::PutRequest* request,
                     ::ibdb::rpc::PutResponse* response,
                     ::google::protobuf::Closure* done) {
-    // tablet_->
-    done->Run();
+    brpc::ClosureGuard done_guard(done);
+    if (!tablet_->Put(request, response)) {
+        LOG(ERROR) << "failed tp send request[" << request->statement() << "]";
+        response->set_code(RpcCode::FAILED);
+        return;
+    }
     return;
 }
-                    
+
 void TabletNode::Get(::google::protobuf::RpcController* controller,
                     const ::ibdb::rpc::GetRequest* request,
                     ::ibdb::rpc::GetResponse* response,
                     ::google::protobuf::Closure* done) {
-    done->Run();
+    brpc::ClosureGuard done_guard(done);
+
     return;
 
 }

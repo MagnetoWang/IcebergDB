@@ -85,7 +85,6 @@ TEST(SegmentTest, MemPutAndGet) {
     }
     // uint64_t now_time = i;
     for (int i = 0; i < number; i++) {
-        
         std::string value_string = "value" + std::to_string(now_time);
         Slice value(value_string);
         uint64_t get_offset = 0;

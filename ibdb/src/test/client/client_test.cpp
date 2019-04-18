@@ -2,7 +2,7 @@
  * @Author: MagnetoWang 
  * @Date: 2019-04-14 16:41:37 
  * @Last Modified by: MagnetoWang
- * @Last Modified time: 2019-04-16 22:50:36
+ * @Last Modified time: 2019-04-17 13:25:54
  */
 
 #include "client/rpc.h"
@@ -47,6 +47,7 @@ int main(int argc, char** argv) {
             LOG(ERROR) << request.statement();
         }
         assert(response.msg() == request.statement());
+        LOG(INFO) << "send request successfully";
         ibdb::base::sleep(1000);
     }
 }
