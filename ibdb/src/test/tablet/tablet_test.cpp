@@ -26,16 +26,16 @@ DECLARE_string(db_root);
 namespace ibdb {
 namespace tablet {
 
-class TabletClass {};
+class TabletTest {};
 
-TEST(TabletClass, Simply) {
+TEST(TabletTest, Simply) {
     std::string endpoint = "127.0.0.1:99991";
     bool is_leader = true;
     Tablet tablet(endpoint, is_leader);
     ASSERT_EQ(tablet.Init(), true);
 }
 
-TEST(TabletClass, CreateRequest) {
+TEST(TabletTest, CreateRequest) {
     std::string endpoint = "127.0.0.1:99991";
     bool is_leader = true;
     Tablet tablet(endpoint, is_leader);
@@ -48,7 +48,7 @@ TEST(TabletClass, CreateRequest) {
     tablet.Create(create_request, create_reponse);
 }
 
-TEST(TabletClass, PutAndGetRequest) {
+TEST(TabletTest, PutAndGetRequest) {
     std::string endpoint = "127.0.0.1:99991";
     bool is_leader = true;
     Tablet tablet(endpoint, is_leader);

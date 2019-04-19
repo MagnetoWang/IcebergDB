@@ -11,7 +11,10 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <chrono> // for timestamp
+
 #include "port/port.h"
+
+#include "boost/algorithm/string.hpp"
 #include "glog/logging.h"
 #include "gflags/gflags.h"
 
@@ -55,26 +58,7 @@ static inline void SplitString(const std::string& full,
     if (full.empty()) {
         return;
     }
-
-    std::string tmp;
-    std::string::size_type pos_begin = full.find_first_not_of(delim);
-    std::string::size_type comma_pos = 0;
-
-    while (pos_begin != std::string::npos) {
-        comma_pos = full.find(delim, pos_begin);
-        if (comma_pos != std::string::npos) {
-            tmp = full.substr(pos_begin, comma_pos - pos_begin);
-            pos_begin = comma_pos + delim.length();
-        } else {
-            tmp = full.substr(pos_begin);
-            pos_begin = comma_pos;
-        }
-
-        if (!tmp.empty()) {
-            result->push_back(tmp);
-            tmp.clear();
-        }
-    }
+    boost::algorithm::split(*result, full, boost::is_any_of(delim.c_str()));
 }
 
 static inline bool IsVisible(char c) {
