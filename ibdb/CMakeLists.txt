@@ -22,7 +22,17 @@ include_directories(src)
 
 set(BOOST_ROOT third-party)
 
-find_package(Boost REQUIRED COMPONENTS system filesystem)
+find_package(Boost 1.68.0 COMPONENTS COMPONENTS system filesystem)
+if(Boost_FOUND)
+
+    message(STATUS "Boost_INCLUDE_DIRS: ${Boost_INCLUDE_DIRS}")
+    message(STATUS "Boost_LIBRARIES: ${Boost_LIBRARIES}")
+    message(STATUS "Boost_VERSION: ${Boost_VERSION}")
+
+    include_directories(${Boost_INCLUDE_DIRS})
+
+endif()
+
 find_package(gflags REQUIRED)
 find_package(glog REQUIRED)
 # find_package(protobuf REQUIRED)
@@ -94,8 +104,8 @@ add_library(storage src/storage/table.cpp)
 set(SOURCE_FILES src/test/map_test.cpp)
 add_executable(map_test ${SOURCE_FILES})
 
-add_executable(boost_test src/test/boost_test.cpp)
-target_link_libraries(boost_test Boost::system Boost::filesystem)
+#add_executable(boost_test src/test/boost_test.cpp)
+#target_link_libraries(boost_test Boost::system Boost::filesystem)
 
 add_executable(gflags_test src/test/gflags_test.cpp src/flags.cc)
 target_link_libraries(gflags_test gflags)
@@ -147,8 +157,11 @@ target_link_libraries(tablet_test base log protocc protobuf pthread glog gtest g
 add_executable(server_test src/test/client/server_test.cpp)
 target_link_libraries(server_test base log protocc protobuf pthread glog gtest gflags brpc)
 
-add_executable(client_rpc src/test/client/client_rpc.cpp)
-target_link_libraries(client_rpc base log protocc protobuf pthread glog gtest gflags brpc)
+add_executable(client_test src/test/client/client_test.cpp)
+target_link_libraries(client_test base log protocc protobuf pthread glog gtest gflags brpc)
+
+add_executable(zk_test src/test/client/zk_test.cpp)
+target_link_libraries(zk_test base glog gtest gflags zookeeper_mt)
 
 # -------------------------------------
 

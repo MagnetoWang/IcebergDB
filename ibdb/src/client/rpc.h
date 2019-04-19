@@ -8,7 +8,9 @@
 #ifndef IBDB_CLIENT_RPC_H
 #define IBDB_CLIENT_RPC_H
 #include "base/noncopyable.h"
+#include "port/port.h"
 
+#include "boost/function.hpp"
 #include "brpc/controller.h"
 #include "brpc/channel.h"
 #include "glog/logging.h"
@@ -22,6 +24,8 @@ DECLARE_int32(max_retry);
 
 namespace ibdb {
 namespace client {
+
+//typedef boost::function<void(::google::protobuf::RpcController* controller, const Request* Request, Response*, Callback*)>
 
 template<class Stub>
 class RpcClient : Noncopyable {
