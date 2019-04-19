@@ -39,9 +39,9 @@ public:
     explicit Tablet(const ibdb::rpc::TabletManifest& tablet_manifest);
     ~Tablet() {}
     bool Init();
-    bool Create(::ibdb::rpc::CreateRequest* const request, ::ibdb::rpc::CreateResponse* const response);
-    bool Put(::ibdb::rpc::PutRequest* const request, ::ibdb::rpc::PutResponse* const response);
-    bool Get(::ibdb::rpc::GetRequest* const request, ::ibdb::rpc::GetResponse* const response);
+    bool Create(const ::ibdb::rpc::CreateRequest* const request, ::ibdb::rpc::CreateResponse* const response);
+    bool Put(const ::ibdb::rpc::PutRequest* const request, ::ibdb::rpc::PutResponse* const response);
+    bool Get(const ::ibdb::rpc::GetRequest* const request, ::ibdb::rpc::GetResponse* const response);
     bool Delete();
 
 private:
@@ -72,7 +72,7 @@ bool Tablet::Init() {
 
 // create table_name ts_name,uint_64,isIndex col_name,type,isIndex  col_name,type,isIndex
 // assume request is vaild
-bool Tablet::Create(::ibdb::rpc::CreateRequest* const request, ::ibdb::rpc::CreateResponse* const response) {
+bool Tablet::Create(const ::ibdb::rpc::CreateRequest* const request, ::ibdb::rpc::CreateResponse* const response) {
     std::string statement = request->statement();
     std::string delim(" ");
     std::vector<std::string> result;
@@ -105,7 +105,7 @@ bool Tablet::Create(::ibdb::rpc::CreateRequest* const request, ::ibdb::rpc::Crea
 
 // insert table_name key,key,key value,value,value
 // TODO 判断输入参数是否正确
-bool Tablet::Put(::ibdb::rpc::PutRequest* const request, ::ibdb::rpc::PutResponse* const response) {
+bool Tablet::Put(const ::ibdb::rpc::PutRequest* const request, ::ibdb::rpc::PutResponse* const response) {
     std::string statement = request->statement();
     std::string delim(" ");
     std::vector<std::string> result;
@@ -128,7 +128,7 @@ bool Tablet::Put(::ibdb::rpc::PutRequest* const request, ::ibdb::rpc::PutRespons
 
 // get table_name key value timestamp
 // TODO 判断输入参数是否正确
-bool Tablet::Get(::ibdb::rpc::GetRequest* const request, ::ibdb::rpc::GetResponse* const response) {
+bool Tablet::Get(const ::ibdb::rpc::GetRequest* const request, ::ibdb::rpc::GetResponse* const response) {
     std::string statement = request->statement();
     std::string delim(" ");
     std::vector<std::string> result;
