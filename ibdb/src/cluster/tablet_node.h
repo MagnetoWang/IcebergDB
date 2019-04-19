@@ -69,7 +69,7 @@ TabletNode::~TabletNode() {
 }
 
 bool TabletNode::Init() {
-
+    return true;
 }
 
 void TabletNode::Create(::google::protobuf::RpcController* controller,
@@ -77,8 +77,8 @@ void TabletNode::Create(::google::protobuf::RpcController* controller,
                     ::ibdb::rpc::CreateResponse* response,
                     ::google::protobuf::Closure* done) {
     brpc::ClosureGuard done_guard(done);
-    if (!tablet->Create(request, response)) {
-        response->set_msg("failed to create table[" + request->table_name() + "]");
+    if (!tablet_->Create(request, response)) {
+        response->set_msg("failed to create data[" + request->statement() + "]");
         response->set_code(RpcCode::FAILED);
         LOG(ERROR) << response->msg();
         return;
@@ -93,7 +93,7 @@ void TabletNode::Put(::google::protobuf::RpcController* controller,
                     ::google::protobuf::Closure* done) {
     brpc::ClosureGuard done_guard(done);
     if (!tablet_->Put(request, response)) {
-        LOG(ERROR) << "failed tp send request[" << request->statement() << "]";
+        LOG(ERROR) << "failed to put data[" << request->statement() << "]";
         response->set_code(RpcCode::FAILED);
         return;
     }
@@ -105,7 +105,11 @@ void TabletNode::Get(::google::protobuf::RpcController* controller,
                     ::ibdb::rpc::GetResponse* response,
                     ::google::protobuf::Closure* done) {
     brpc::ClosureGuard done_guard(done);
-
+    if (!tablet_->Get(request, response)) {
+        LOG(ERROR) << "failed to get data[" << request->statement() << "]";
+        response->set_code(RpcCode::FAILED);
+        return;
+    }
     return;
 
 }
