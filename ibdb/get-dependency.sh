@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 ROOT_PATH=`pwd`
 THIRD_LIBRARY="third-party"
 THIRD_SRC="third-src"
@@ -273,7 +274,7 @@ fi
 if [ -d "brpc" ];then
     echo "brpc is exist"
 else
-    # git clone --depth 1 https://github.com/apache/incubator-brpc.git
+    git clone --depth 1 https://github.com/apache/incubator-brpc.git
     cd incubator-brpc
     sh config_brpc.sh --headers=${DEPS_PREFIX}/include --libs=${DEPS_PREFIX}/lib --with-glog
     make -j5
@@ -286,11 +287,15 @@ else
     cd ${DEPS_SOURCE}
 fi
 
-if [ -d "zookeeper" ];then
+if [ -d "zookeeper-3.4.14" ];then
     echo "zookeeper is exist"
 else
     curl -L -O https://mirrors.tuna.tsinghua.edu.cn/apache/zookeeper/stable/zookeeper-3.4.14.tar.gz
     tar -zxvf zookeeper-3.4.14.tar.gz
+    cd zookeeper-3.4.14/zookeeper-client/zookeeper-client-c
+    ./configure --prefix=${DEPS_PREFIX} --enable-shared=no --enable-static=yes
+    make -j4 >/dev/null
+    make install
     mv zookeeper-3.4.14 zookeeper
 fi
 
