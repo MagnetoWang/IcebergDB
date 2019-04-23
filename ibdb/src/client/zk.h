@@ -75,10 +75,17 @@ void WatcherFunction(zhandle_t *zh, int type, int state, const char *path,void *
 };
 
 ZkClient::ZkClient(const std::string& servers, uint32_t session_timeout, uint32_t connection_timeout)
-    :   servers_(servers), session_timeout_(session_timeout), connection_timeout_(connection_timeout),
+    :   servers_(servers),
+        session_timeout_(session_timeout),
+        connection_timeout_(connection_timeout),
+        zh_(nullptr),
         connected_(false) {}
 
-ZkClient::~ZkClient() {}
+ZkClient::~ZkClient() {
+    if (zh_ != nullptr) {
+        zookeeper_close(zh_);
+    }
+}
 
 bool ZkClient::Init() {
     std::unique_lock<std::mutex> lock(mu_);
@@ -115,7 +122,7 @@ bool ZkClient::CreateNode(const std::string &path, const std::string &data, uint
         LOG(ERROR) << "acl is invalid acl[" + std::to_string(acl) + "]";
         return false;
     }
-    if (create_parent == true) {
+    if (create_parent) {
         std::string parent = path.substr(0, path.find_last_of("/"));
         if(!CreateParent(parent)) {
             LOG(ERROR) << "create parent path happened to error path[" + path + "]";
@@ -273,7 +280,7 @@ bool ZkClient::DeleteAllOfNodes(const std::string &path) {
     }
     std::vector<std::string> children;
     bool result = GetChildren(path, children);
-    if (result == false) {
+    if (!result) {
         return false;
     }
     for (std::string e : children) {
