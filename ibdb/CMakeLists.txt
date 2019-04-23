@@ -155,7 +155,7 @@ add_executable(tablet_test src/test/tablet/tablet_test.cpp)
 target_link_libraries(tablet_test base log protocc protobuf pthread glog gtest gflags brpc)
 
 add_executable(server_test src/test/client/server_test.cpp)
-target_link_libraries(server_test base log protocc protobuf pthread glog gtest gflags brpc)
+target_link_libraries(server_test base log protocc protobuf pthread glog gtest gflags zookeeper_mt brpc)
 
 add_executable(client_test src/test/client/client_test.cpp)
 target_link_libraries(client_test base log protocc protobuf pthread glog gtest gflags brpc)
@@ -163,6 +163,8 @@ target_link_libraries(client_test base log protocc protobuf pthread glog gtest g
 add_executable(zk_test src/test/client/zk_test.cpp)
 target_link_libraries(zk_test base glog gtest gflags zookeeper_mt)
 
+add_executable(ibdbs src/client/ibdb.cpp)
+target_link_libraries(ibdbs base log protocc protobuf glog gtest gflags zookeeper_mt brpc)
 # -------------------------------------
 
 message(${PROJECT_SOURCE_DIR})
