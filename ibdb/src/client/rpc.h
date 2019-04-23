@@ -26,7 +26,7 @@ namespace ibdb {
 namespace client {
 
 //typedef boost::function<void(::google::protobuf::RpcController* controller, const Request* Request, Response*, Callback*)>
-
+// every client connect to single server node
 template<class Stub>
 class RpcClient : Noncopyable {
 public:
@@ -59,6 +59,7 @@ RpcClient<Stub>::~RpcClient() {
     delete service_stub_;
 }
 
+// build channel and init channel with endpoint once
 template<class Stub>
 bool RpcClient<Stub>::Init() {
     channel_ = new brpc::Channel();
@@ -91,6 +92,7 @@ void RpcClient<Stub>::SendRequest(void(Stub::*function)(::google::protobuf::RpcC
         response->set_msg("send request is wrong");
         response->set_code(RpcCode::FAILED);
     }
+    log_id_++;
 }
 
 } // client
