@@ -43,6 +43,9 @@ public:
                      const Request*, Response*, Callback*),
                      const Request* request,
                      Response* response, uint32_t timeout_ms, uint32_t max_retry);
+    std::string endpoint() {
+        return endpoint_;
+    }
 private:
     // ip:port
     std::string endpoint_;
