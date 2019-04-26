@@ -12,6 +12,13 @@ message TabletManifest {
     required bool is_leader = 3;
 }
 
+message NodeInfomation {
+    required string endpoint = 1;
+    required string health = 2;
+    required string status = 3;
+    required string current_offset = 4;
+}
+
 message TabletRequest {
     required string statement = 1;
 }
@@ -70,10 +77,58 @@ message UpdateResponse {
     required string msg = 2;
 }
 
+message BatchDataRequest {
+    required string endpoint = 1;
+    required string table_name = 2;
+    repeated string statement = 3;
+}
+
+message BatchDataResponse{
+    required uint32 code = 1;
+    required string msg = 2;
+}
+
+message TableManifestRequest {
+    required ibdb.storage.TableManifest table_manifest = 1;
+}
+
+message TableManifestResponse {
+    required uint32 code = 1;
+    required string msg = 2;
+}
+
+message GeneralResponse {
+    required uint32 code = 1;
+    required string msg = 2;
+}
+
+message GetTabletManifestRequest {
+    required string endpoint = 1;
+}
+
+message GetTabletManifestResponse {
+    required uint32 code = 1;
+    required string msg = 2;
+    required TabletManifest tablet_manifest = 3;
+}
+
+message GetBatchDataRequest {
+    required string table_name = 1;
+    required uint64 start_offset = 2;
+    required uint64 end_offset = 3;
+}
+
+message GetBatchDataResponse {
+
+}
+
 service TabletService {
     rpc Create(CreateRequest) returns (CreateResponse);
     rpc Put(PutRequest) returns (PutResponse);
     rpc Get(GetRequest) returns (GetResponse);
     rpc Delete (DeleteRequest) returns (DeleteResponse);
     rpc Update(UpdateRequest) returns (UpdateResponse);
+    rpc SendBatchData(BatchDataRequest) returns (BatchDataResponse);
+    rpc SendTableManifest(TableManifestRequest) returns (TableManifestResponse);
+    rpc GetTabletManifest(GetTabletManifestRequest) returns (GetTabletManifestResponse);
 }
