@@ -3,8 +3,8 @@ ROOT_PATH=`pwd`
 
 PROTOC_PATH=$ROOT_PATH/src/protobuf
 
-third-party/bin/protoc --proto_path=$PROTOC_PATH --cpp_out=$PROTOC_PATH $PROTOC_PATH/storage.proto -Wdeprecated-declarations
-third-party/bin/protoc --proto_path=$PROTOC_PATH --cpp_out=$PROTOC_PATH $PROTOC_PATH/rpc.proto -Wdeprecated-declarations
+third-party/bin/protoc --proto_path=$PROTOC_PATH --cpp_out=$PROTOC_PATH $PROTOC_PATH/storage.proto
+third-party/bin/protoc --proto_path=$PROTOC_PATH --cpp_out=$PROTOC_PATH $PROTOC_PATH/rpc.proto
 # third-party/bin/protoc --version
 
 # be careful protoc must be v2.6.0 or lower version
