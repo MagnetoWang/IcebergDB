@@ -39,6 +39,7 @@ public:
     bool SetData(const std::string& path, const std::string& data);
     bool CheckNodeExisted(const std::string& path);
     bool DeleteAllOfNodes(const std::string& path);
+    bool IsExistedPath(const std::string& path);
 //    static void WatcherFunction(zhandle_t *zh, int type, int state, const char *path,void *watcherCtxn
 
 //    GetNode();
@@ -288,6 +289,16 @@ bool ZkClient::DeleteAllOfNodes(const std::string &path) {
         DeleteNode(node);
     }
     return true;
+}
+
+// true is existed, false is not existed
+bool ZkClient::IsExistedPath(const std::string &path) {
+    struct Stat stat;
+    int result = zoo_exists(zh_, path.c_str(), 0, &stat);
+    if (result == ZOO_ERRORS::ZOK) {
+        return true;
+    }
+    return false;
 }
 
 } // client
