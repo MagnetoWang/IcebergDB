@@ -164,7 +164,7 @@ add_executable(zk_test src/test/client/zk_test.cpp)
 target_link_libraries(zk_test base glog gtest gflags zookeeper_mt)
 
 add_executable(tablet_node_test src/test/cluster/tablet_node.cpp)
-target_link_libraries(tablet_node_test base log protocc protobuf pthread glog gtest gflags zookeeper_mt brpc)
+target_link_libraries(tablet_node_test base log storage protocc protobuf pthread glog gtest gflags zookeeper_mt brpc)
 
 add_executable(ibdbs src/client/ibdb.cpp)
 target_link_libraries(ibdbs base log protocc protobuf glog gtest gflags zookeeper_mt brpc)
