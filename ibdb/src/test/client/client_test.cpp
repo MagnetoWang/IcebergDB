@@ -1,6 +1,6 @@
 /*
- * @Author: MagnetoWang 
- * @Date: 2019-04-14 16:41:37 
+ * @Author: MagnetoWang
+ * @Date: 2019-04-14 16:41:37
  * @Last Modified by: MagnetoWang
  * @Last Modified time: 2019-04-17 13:25:54
  */
@@ -8,19 +8,16 @@
 #include "client/rpc.h"
 
 #include "protobuf/rpc.pb.h"
-#include "cluster/tablet_node.h"
-#include "port/port.h"
+//#include "cluster/tablet_node.h"
+#include "base/utils.h"
 
 #include "gtest/gtest.h"
 #include "glog/logging.h"
 #include "gflags/gflags.h"
 
-using ibdb::rpc::CreateRequest;
-using ibdb::rpc::CreateResponse;
 using ibdb::client::RpcClient;
 using ibdb::rpc::TabletService;
 using ibdb::rpc::TabletService_Stub;
-using ibdb::cluster::TabletNode;
 
 DECLARE_int32(timeout_ms);
 DECLARE_int32(max_retry);
@@ -34,8 +31,8 @@ int main(int argc, char** argv) {
     RpcClient<TabletService_Stub>* client = new RpcClient<TabletService_Stub>(endpoint);
     bool init = client->Init();
     assert(init == true);
-    CreateRequest request;
-    CreateResponse response;
+    ibdb::rpc::CreateRequest request;
+    ibdb::rpc::CreateResponse response;
     int number = 10;
     for (int i = 0; i < number; i++) {
         std::string send_string = "value" + std::to_string(i);
