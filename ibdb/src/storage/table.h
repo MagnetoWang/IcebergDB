@@ -48,6 +48,7 @@ public:
     bool PutIndex(std::string& key, uint64_t& timestamp, std::string& value, uint64_t& offset);
     bool Put(std::string& statement);
     bool Get(std::string& statement, std::string& message);
+    bool GetBatchData(const uint64_t start_offset, const uint64_t end_offset, std::vector<std::string>& data);
     bool FindOffsetPosition(uint64_t& offset, uint64_t& start_offset, uint32_t& pos, std::string& file);
     bool FindMessage(uint64_t& offset, uint64_t& start_offset, uint32_t& pos, std::string& file, Slice* const result);
     bool Delete();
@@ -265,9 +266,11 @@ bool Table::Get(std::string& statement, std::string& message) {
 }
 
 // find file postion in offset_pos_map_
+// offset is input parameter
+//
 bool Table::FindOffsetPosition(uint64_t& offset, uint64_t& start_offset, uint32_t& pos, std::string& file) {
     // TODO 是否需要判断offset越界问题？
-    std::map<std::string, std::map<uint64_t, uint32_t>>::iterator it = offset_pos_map_.begin();
+    auto it = offset_pos_map_.begin();
     uint64_t log_offset = 0;
     uint32_t log_pos = 0;
     bool find_flags = false;
@@ -337,6 +340,29 @@ bool Table::FindMessage(uint64_t& offset, uint64_t& start_offset, uint32_t& pos,
     }
     LOG(INFO) << "get message is successed message[" << message->data() << "]";
     *result = Slice(message->data(), message->size());
+    return true;
+}
+
+// end_offset > start_offet
+// TODO 现在是非常低效的方法，相当于循环调用get。因为直接磁盘读取更快，时间问题，暂时先这样实现
+bool Table::GetBatchData(const uint64_t start_offset, const uint64_t end_offset, std::vector<std::string>& data) {
+    for (uint64_t i = start_offset; i < end_offset; i++) {
+        uint64_t start_point = 0;
+        uint32_t pos = 0;
+        std::string file;
+        bool result = FindOffsetPosition(i, start_point, pos, file);
+        if (!result) {
+            LOG(ERROR) << "find message position failed offset[" << std::to_string(i) << "] file[" << file << "]";
+            return false;
+        }
+        Slice* message = new Slice();
+        if (!FindMessage(i, start_point, pos, file, message)) {
+            LOG(ERROR) << "find message failed offset[" << std::to_string(i) << "] file[" << file << "]";
+            return false;
+        }
+        std::string statement(message->data());
+        data.push_back(statement);
+    }
     return true;
 }
 

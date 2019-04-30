@@ -21,6 +21,7 @@ using ibdb::storage::Schema;
 using ibdb::storage::TableManifest;
 using ibdb::storage::Field;
 using ibdb::port::RpcCode;
+using ibdb::rpc::TabletManifest;
 
 
 DECLARE_uint32(log_index_sparse_threshold);
@@ -42,14 +43,29 @@ public:
     bool Create(const ::ibdb::rpc::CreateRequest* const request, ::ibdb::rpc::CreateResponse* const response);
     bool Put(const ::ibdb::rpc::PutRequest* const request, ::ibdb::rpc::PutResponse* const response);
     bool Get(const ::ibdb::rpc::GetRequest* const request, ::ibdb::rpc::GetResponse* const response);
+    std::vector<std::string> GetStatements(const std::string& table_name, const uint64_t start_offset, const uint64_t end_offset);
     bool Delete();
+    inline TableManifest* GetTableManifest(const std::string& table_name) {
+        auto iterator = table_manifest_map_.find(table_name);
+        if (iterator == table_manifest_map_.end()) {
+            LOG(ERROR) << "table manifest is not found";
+            return nullptr;
+        }
+        return &iterator->second;
+    }
 
+    inline TabletManifest GetTabletManifest() {
+        return *tablet_manifest_;
+    }
 private:
     std::mutex mu_;
     std::string endpoint_;
     bool is_leader_;
     ibdb::rpc::TabletManifest* tablet_manifest_;
+    // table name with table
     std::map<std::string, std::shared_ptr<Table>> table_map_;
+    // table name with table manifest
+    std::map<std::string, TableManifest> table_manifest_map_;
     // std::map<std::string, uint64_t> table_offset_map_;
 };
 
@@ -100,6 +116,7 @@ bool Tablet::Create(const ::ibdb::rpc::CreateRequest* const request, ::ibdb::rpc
     TableManifest* manifest = tablet_manifest_->add_table_manifest();
     manifest->CopyFrom(table_ptr->GetTableManifest());
     table_map_.insert(std::make_pair(table_name, table_ptr));
+    table_manifest_map_.insert(std::make_pair(table_name, *manifest));
     return true;
 }
 
@@ -115,12 +132,20 @@ bool Tablet::Put(const ::ibdb::rpc::PutRequest* const request, ::ibdb::rpc::PutR
     std::lock_guard<std::mutex> lock(mu_);
     auto iterator = table_map_.find(result.at(1));
     if (iterator == table_map_.end()) {
-        response->set_msg("put ok");
-        response->set_code(code);
+        response->set_msg("table is not exist");
+        response->set_code(RpcCode::FAILED);
         return false;
     }
     std::shared_ptr<Table> table = iterator->second;
     table->Put(statement);
+    auto manifest = table_manifest_map_.find(result.at(1));
+    if (manifest == table_manifest_map_.end()) {
+        LOG(ERROR) << "no table manifest in map table_name[" << result.at(1) << "]";
+        return false;
+    }
+    uint64_t offset = manifest->second.current_offset();
+    offset++;
+    manifest->second.set_current_offset(offset);
     response->set_msg("put ok");
     response->set_code(code);
     return true;
@@ -149,6 +174,22 @@ bool Tablet::Get(const ::ibdb::rpc::GetRequest* const request, ::ibdb::rpc::GetR
     response->set_msg(message);
     response->set_code(code);
     return true;
+}
+
+// if wrong return nullptr
+// end_offset > start_offset
+// TODO 设计的哲学，返回值的选择，指针，对象，对象引用，还是传值。如果出错能返回nullptr，这样合适吗，合理吗？怎样拥有合理的设计模式呢
+std::vector<std::string> Tablet::GetStatements(const std::string &table_name, const uint64_t start_offset,
+                                               const uint64_t end_offset) {
+    auto it = table_map_.find(table_name);
+    std::vector<std::string> data;
+    if (it == table_map_.end()) {
+        // return empty vector
+        return data;
+    }
+    std::shared_ptr<Table> table = it->second;
+    table->GetBatchData(start_offset, end_offset, data);
+    return data;
 }
 
 } // tablet
