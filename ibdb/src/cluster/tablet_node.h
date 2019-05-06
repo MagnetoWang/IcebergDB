@@ -81,7 +81,7 @@ public:
                        const ::ibdb::rpc::UpdateRequest* request,
                        ::ibdb::rpc::UpdateResponse* response,
                        ::google::protobuf::Closure* done) {}
-   void GetTabletManifest(::google::protobuf::RpcController* controller,
+    void GetTabletManifest(::google::protobuf::RpcController* controller,
                           const ::ibdb::rpc::GetTabletManifestRequest* request,
                           ::ibdb::rpc::GetTabletManifestResponse* response,
                           ::google::protobuf::Closure* done);
@@ -89,12 +89,15 @@ public:
                        const ::ibdb::rpc::BatchDataRequest* request,
                        ::ibdb::rpc::BatchDataResponse* response,
                        ::google::protobuf::Closure* done);
+    std::string endpoint() {
+        return endpoint_;
+    }
+    void StartSever(const std::string& endpoint);
 
 private:
     bool RegisterZk();
     // return true means you are leader in current term, or you are not leader
     bool SelectLeader();
-    void StartSever();
     // sync
     void SyncTabletData();
     bool SendTableData(const std::string& table_name, uint64_t offset, uint64_t next_node_offset);
@@ -164,6 +167,7 @@ bool TabletNode::Init() {
         tablet_ = std::make_shared<Tablet>(endpoint_, false);
     }
     tablet_ = std::make_shared<Tablet>(endpoint_, true);
+//    StartSever();
     task_pool_.DelayTask(FLAGS_thread_interval, boost::bind(&TabletNode::UpdateTabletStatus, this));
     task_pool_.DelayTask(FLAGS_thread_interval, boost::bind(&TabletNode::SyncTabletData, this));
     return true;
@@ -200,7 +204,7 @@ bool TabletNode::RegisterZk() {
 }
 
 bool TabletNode::SelectLeader() {
-    std::string node_path = FLAGS_zk_select_node + "/leader";
+    std::string node_path = FLAGS_zk_select_node;
     return zk_client_->CreateNode(node_path, endpoint_, 0, 0, true);
 }
 
@@ -284,7 +288,7 @@ void TabletNode::SyncTabletData() {
     task_pool_.DelayTask(FLAGS_thread_interval, boost::bind(&TabletNode::SyncTabletData, this));
 }
 
-void TabletNode::StartSever() {
+void TabletNode::StartSever(const std::string& endpoint) {
     server_ = new brpc::Server();
     int result = server_->AddService(this, brpc::SERVER_DOESNT_OWN_SERVICE);
     if (result != 0) {
@@ -293,11 +297,11 @@ void TabletNode::StartSever() {
     }
     brpc::ServerOptions options;
     options.idle_timeout_sec = FLAGS_timeout_ms;
-    if (server_->Start(endpoint_.c_str(), &options) != 0) {
+    if (server_->Start(endpoint.c_str(), &options) != 0) {
         LOG(ERROR) << "Fail to start rpc server";
         return;
     }
-    server_->RunUntilAskedToQuit();
+    // server_->RunUntilAskedToQuit();
     return;
 }
 
@@ -373,6 +377,7 @@ bool TabletNode::SendTableData(const std::string& table_name, uint64_t offset, u
         request.add_statement(e);
     }
     rpc_client_->SendRequest(&TabletService_Stub::SendBatchData, &request, &response, FLAGS_timeout_ms, FLAGS_max_retry);
+    return true;
 }
 
 void TabletNode::SendBatchData(::google::protobuf::RpcController *controller,
