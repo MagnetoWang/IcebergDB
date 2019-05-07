@@ -8,18 +8,13 @@
 
 #include "protobuf/rpc.pb.h"
 #include "cluster/tablet_node.h"
-#include "port/port.h"
 
 #include "brpc/server.h"
 #include "gtest/gtest.h"
 #include "glog/logging.h"
 #include "gflags/gflags.h"
 
-using ibdb::rpc::CreateRequest;
-using ibdb::rpc::CreateResponse;
-using ibdb::client::RpcClient;
 using ibdb::rpc::TabletService;
-using ibdb::rpc::TabletService_Stub;
 using ibdb::cluster::TabletNode;
 
 DECLARE_int32(timeout_ms);

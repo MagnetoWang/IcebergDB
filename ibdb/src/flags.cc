@@ -30,7 +30,7 @@ DEFINE_uint32(skiplist_height, 4, "config segment skiplist");
 DEFINE_string(table_timestamp, "timestamp", "every table has timestamp as a key");
 
 //rpc
-DEFINE_int32(timeout_ms, 100, "rpc client timeout in milliseconds");
+DEFINE_int32(timeout_ms, 1000, "rpc client timeout in milliseconds");
 DEFINE_int32(max_retry, 5, "Max retries(not including the first RPC)");
 
 //zk
@@ -48,7 +48,8 @@ DEFINE_uint32(sync_offset_threshold, 10, "a trigger will be doing when current t
 
 //ibdb
 DEFINE_string(start_program, "node | client", "start server, tablet or something else");
-
+DEFINE_string(start_zk_endpoint, "", "config zk endpoint for connecting zk");
+DEFINE_string(start_endpoint, "", "config server endpoint");
 
 
 

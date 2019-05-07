@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 ROOT_PATH=`pwd`
 THIRD_LIBRARY="third-party"
 THIRD_SRC="third-src"
