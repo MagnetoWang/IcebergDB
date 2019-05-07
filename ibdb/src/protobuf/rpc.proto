@@ -119,7 +119,16 @@ message GetBatchDataRequest {
 }
 
 message GetBatchDataResponse {
+    required uint32 code = 1;
+    required string msg = 2;
+}
 
+message EchoRequest {
+    required string msg =1;
+}
+
+message EchoResponse {
+    required string msg =1;
 }
 
 service TabletService {
@@ -131,4 +140,5 @@ service TabletService {
     rpc SendBatchData(BatchDataRequest) returns (BatchDataResponse);
     rpc SendTableManifest(TableManifestRequest) returns (TableManifestResponse);
     rpc GetTabletManifest(GetTabletManifestRequest) returns (GetTabletManifestResponse);
+    rpc Echo(EchoRequest) returns (EchoResponse);
 }
