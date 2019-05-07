@@ -66,6 +66,7 @@ private:
     // for reading and writing log files
     WritableFileHandle* wf_;
     RandomAccessFileHandle* rf_;
+    std::map<std::string, RandomAccessFileHandle*> log_reader_map_;
     // for index files
     std::ofstream index_wf_;
     // filename offset file_postion
@@ -244,6 +245,7 @@ bool Table::Get(std::string& statement, std::string& message) {
         return false;
     }
     if (offset_message_.Contains(offset)) {
+        message = offset_message_.Find(offset)->second;
         LOG(INFO) << "offset is existed in cache";
         return true;
     }
@@ -303,7 +305,21 @@ bool Table::FindOffsetPosition(uint64_t& offset, uint64_t& start_offset, uint32_
 // TODO 是否可以把这些函数抽象成一个工具方法，而不是单独类成员函数？
 bool Table::FindMessage(uint64_t& offset, uint64_t& start_offset, uint32_t& pos, std::string& file, Slice* const result) {
     std::string log_file = FLAGS_db_root + "/" + table_manifest_.name() + "/log/" + file;
-    rf_ = new RandomAccessFileHandle(log_file, start_offset);
+    // TODO 为了性能测试暂时这样改
+    // TODO 打开文件次数过大，超过文件描述符的最大值。应该优化成打开一次文件，可以多次读文件
+    // if (rf_ == nullptr) {
+        // rf_ = new RandomAccessFileHandle(log_file, start_offset);
+    // }
+    auto it = log_reader_map_.find(log_file);
+    RandomAccessFileHandle* rf;
+    if (it == log_reader_map_.end()) {
+        // rf_ = new RandomAccessFileHandle(log_file, start_offset);
+        rf = new RandomAccessFileHandle(log_file);
+        log_reader_map_.insert(std::make_pair(log_file, rf));
+        rf_ = log_reader_map_.find(log_file)->second;
+    } else {
+        rf_ = it->second;
+    }
     Slice* message = new Slice();
     while(true) {
         uint64_t message_offset = 0;
@@ -340,6 +356,7 @@ bool Table::FindMessage(uint64_t& offset, uint64_t& start_offset, uint32_t& pos,
     }
     LOG(INFO) << "get message is successed message[" << message->data() << "]";
     *result = Slice(message->data(), message->size());
+    // delete rf_;
     return true;
 }
 
