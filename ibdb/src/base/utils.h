@@ -2,7 +2,7 @@
  * @Author: MagnetoWang 
  * @Date: 2019-03-29 09:51:05 
  * @Last Modified by: MagnetoWang
- * @Last Modified time: 2019-04-16 15:57:22
+ * @Last Modified time: 2019-05-06 13:31:35
  */
 #ifndef IBDB_BASE_UTILS_H
 #define IBDB_BASE_UTILS_H
@@ -132,13 +132,15 @@ static inline bool RemoveFolder(std::string& path) {
     }
 }
 
+// 1 millisecond = 1/1000 second
 static inline uint64_t GetMillisecondTimestamp() {
     auto now = std::chrono::system_clock::now();
     uint64_t ts = (uint64_t)std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
     return ts;
 }
 
-static inline uint64_t GetMicrosecondsTimestamp() {
+// 1 microsecond = 1/1000000 second
+static inline uint64_t GetMicrosecondTimestamp() {
     auto now = std::chrono::system_clock::now();
     uint64_t ts = (uint64_t)std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count();
     return ts;
