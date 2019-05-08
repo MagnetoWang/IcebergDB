@@ -41,7 +41,9 @@ public:
     ~Tablet() {}
     bool Init();
     bool Create(const ::ibdb::rpc::CreateRequest* const request, ::ibdb::rpc::CreateResponse* const response);
+    bool Create(const ::ibdb::rpc::CreateRequest* const request);
     bool Put(const ::ibdb::rpc::PutRequest* const request, ::ibdb::rpc::PutResponse* const response);
+    bool Put(const ::ibdb::rpc::PutRequest* const request);
     bool Get(const ::ibdb::rpc::GetRequest* const request, ::ibdb::rpc::GetResponse* const response);
     std::vector<std::string> GetStatements(const std::string& table_name, const uint64_t start_offset, const uint64_t end_offset);
     bool Delete();
@@ -90,6 +92,38 @@ bool Tablet::Init() {
 // assume request is vaild
 bool Tablet::Create(const ::ibdb::rpc::CreateRequest* const request, ::ibdb::rpc::CreateResponse* const response) {
     std::string statement = request->statement();
+    std::string delim(" ");
+    std::vector<std::string> result;
+    ibdb::base::SplitString(statement, delim, &result);
+    std::string table_name = result.at(1);
+    if (table_map_.find(table_name) != table_map_.end()) {
+        return false;
+    }
+    Schema schema;
+    delim = ",";
+    for (int i = 2; i < result.size(); i++) {
+        Field* field = schema.add_field();
+        std::string key = result.at(i);
+        std::vector<std::string> key_info;
+        ibdb::base::SplitString(key, delim, &key_info);
+        field->set_name(key_info.at(0));
+        field->set_type(key_info.at(1));
+        if (key_info.at(2) == "true") {
+            field->set_is_key(true);
+        } else {
+            field->set_is_key(false);
+        }
+    }
+    std::shared_ptr<Table> table_ptr = std::make_shared<Table>(table_name, schema);
+    TableManifest* manifest = tablet_manifest_->add_table_manifest();
+    manifest->CopyFrom(table_ptr->GetTableManifest());
+    table_map_.insert(std::make_pair(table_name, table_ptr));
+    table_manifest_map_.insert(std::make_pair(table_name, *manifest));
+    return true;
+}
+
+bool Tablet::Create(const ::ibdb::rpc::CreateRequest* const request) {
+        std::string statement = request->statement();
     std::string delim(" ");
     std::vector<std::string> result;
     ibdb::base::SplitString(statement, delim, &result);
