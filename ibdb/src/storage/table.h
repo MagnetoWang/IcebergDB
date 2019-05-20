@@ -54,6 +54,7 @@ public:
     bool Delete();
     std::string GetTableManifestString();
     TableManifest& GetTableManifest();
+    bool Sync();
 
 private:
     // store all of table's information
@@ -67,6 +68,7 @@ private:
     WritableFileHandle* wf_;
     RandomAccessFileHandle* rf_;
     std::map<std::string, RandomAccessFileHandle*> log_reader_map_;
+    uint64_t disk_cache_threshold_;
     // for index files
     std::ofstream index_wf_;
     // filename offset file_postion
@@ -85,7 +87,7 @@ Table::Table(const TableManifest& tmanifest)
 }
 
 // table initialization for the firt time
-Table::Table(const std::string& table_name, const Schema& schema) : current_offset_(0) {
+Table::Table(const std::string& table_name, const Schema& schema) : current_offset_(0), disk_cache_threshold_(1000) {
     std::string table_dir = FLAGS_db_root + "/" + table_name;
     std::string log_dir = table_dir + "/log";
     ibdb::base::MkdirRecur(log_dir);
@@ -137,9 +139,16 @@ bool Table::PutDisk(std::string& statement) {
     if (!s.ok()) {
         return false;
     }
-    s = wf_->Sync();
-    if (!s.ok()) {
-        return false;
+    // s = wf_->Sync();
+    // if (!s.ok()) {
+    //     return false;
+    // }
+    // TODO 同步过程可以优化
+    if (current_offset % disk_cache_threshold_ == 0) {
+        s = wf_->Sync();
+        if (!s.ok()) {
+            return false;
+        }
     }
     std::string current_file = table_manifest_.current_log_file().log_name();
     // write message current_offset and pos to index file
@@ -379,6 +388,14 @@ bool Table::GetBatchData(const uint64_t start_offset, const uint64_t end_offset,
         }
         std::string statement(message->data());
         data.push_back(statement);
+    }
+    return true;
+}
+
+bool Table::Sync() {
+    Status s = wf_->Sync();
+    if (!s.ok()) {
+        return false;
     }
     return true;
 }

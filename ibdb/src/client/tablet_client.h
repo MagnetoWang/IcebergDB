@@ -21,8 +21,9 @@ namespace client {
 
 // send request to any tablet node which you dont care for
 class TabletClient {
+
 public:
-    TabletClient(const std::string& nodes, const std::string& );
+    TabletClient(const std::string& nodes, const std::string& e);
     ~TabletClient();
     bool Init();
     bool Create(const std::string& statement);
@@ -46,9 +47,9 @@ private:
     ZkClient* zk_client_;
 };
 
-//TabletClient::TabletClient(const ) {
-//
-//}
+TabletClient::TabletClient(const std::string& nodes, const std::string& e) {
+
+}
 
 
 } // client

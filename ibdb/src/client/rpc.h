@@ -85,7 +85,9 @@ void RpcClient<Stub>::SendRequest(void(Stub::*function)(::google::protobuf::RpcC
                             const Request* request, Response* response,
                             uint32_t timeout_ms, uint32_t max_retry) {
     brpc::Controller cntl;
-    cntl.set_log_id(log_id_);
+    uint64_t id = log_id_;
+    LOG(ERROR) << id;
+    cntl.set_log_id(id);
     cntl.set_timeout_ms(timeout_ms);
     cntl.set_max_retry(max_retry);
     (service_stub_->*function)(&cntl, request, response, nullptr);
