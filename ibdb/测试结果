@@ -1,0 +1,446 @@
+[ RUN      ] TablePerformance.Put
+E0520 15:01:08.797740 140965312 performance.cpp:93] put number is 0
+E0520 15:01:08.798257 140965312 performance.cpp:94] put the sum of running time is 1
+E0520 15:01:14.592614 140965312 performance.cpp:93] put number is 20000
+E0520 15:01:14.592667 140965312 performance.cpp:94] put the sum of running time is 5704
+E0520 15:01:19.985507 140965312 performance.cpp:93] put number is 40000
+E0520 15:01:19.985541 140965312 performance.cpp:94] put the sum of running time is 11017
+E0520 15:01:25.190927 140965312 performance.cpp:93] put number is 60000
+E0520 15:01:25.191256 140965312 performance.cpp:94] put the sum of running time is 16140
+E0520 15:01:31.456105 140965312 performance.cpp:93] put number is 80000
+E0520 15:01:31.456145 140965312 performance.cpp:94] put the sum of running time is 22272
+Percentile:99=1 ,95=1 ,90=1 ,50=0
+E0520 15:01:38.084169 140965312 performance.cpp:110] put number is 100000
+E0520 15:01:38.084288 140965312 performance.cpp:111] put the sum of running time is 28766
+E0520 15:01:52.889808 140965312 performance.cpp:128] get number is 80000
+E0520 15:01:52.890823 140965312 performance.cpp:129] get the sum of running time is 14737
+E0520 15:02:07.852275 140965312 performance.cpp:128] get number is 60000
+E0520 15:02:07.852869 140965312 performance.cpp:129] get the sum of running time is 29622
+E0520 15:02:22.985486 140965312 performance.cpp:128] get number is 40000
+E0520 15:02:22.986321 140965312 performance.cpp:129] get the sum of running time is 44667
+E0520 15:02:36.439729 140965312 performance.cpp:128] get number is 20000
+E0520 15:02:36.440814 140965312 performance.cpp:129] get the sum of running time is 58057
+E0520 15:02:49.860947 140965312 performance.cpp:128] get number is 0
+E0520 15:02:49.861706 140965312 performance.cpp:129] get the sum of running time is 71422
+E0520 15:02:49.862392 140965312 performance.cpp:135] get number is 100000
+E0520 15:02:49.862423 140965312 performance.cpp:136] get the sum of running time is 71422
+Percentile:99=2 ,95=1 ,90=1 ,50=1
+E0520 15:02:50.352021 140965312 performance.cpp:160] get number is 80000
+E0520 15:02:50.352071 140965312 performance.cpp:161] get the sum of running time is 459
+E0520 15:02:50.876824 140965312 performance.cpp:160] get number is 60000
+E0520 15:02:50.876869 140965312 performance.cpp:161] get the sum of running time is 953
+E0520 15:02:51.383164 140965312 performance.cpp:160] get number is 40000
+E0520 15:02:51.383198 140965312 performance.cpp:161] get the sum of running time is 1427
+E0520 15:02:51.827781 140965312 performance.cpp:160] get number is 20000
+E0520 15:02:51.827837 140965312 performance.cpp:161] get the sum of running time is 1836
+E0520 15:02:52.242139 140965312 performance.cpp:160] get number is 0
+E0520 15:02:52.242192 140965312 performance.cpp:161] get the sum of running time is 2219
+Percentile:99=1 ,95=0 ,90=0 ,50=0
+E0520 15:02:52.242971 140965312 performance.cpp:174] In cache get number is 100000
+E0520 15:02:52.243008 140965312 performance.cpp:175] In cache get the sum of running time is 2219
+[       OK ] TablePerformance.Put (103538 ms)
+[----------] 1 test from TablePerformance (103538 ms total)
+
+
+
+[ RUN      ] TablePerformance.Put
+E0520 15:04:33.222640 271381952 performance.cpp:93] put number is 0
+E0520 15:04:33.223240 271381952 performance.cpp:94] put the sum of running time is 1
+E0520 15:04:35.648842 271381952 performance.cpp:93] put number is 20000
+E0520 15:04:35.648901 271381952 performance.cpp:94] put the sum of running time is 2302
+E0520 15:04:37.840229 271381952 performance.cpp:93] put number is 40000
+E0520 15:04:37.840278 271381952 performance.cpp:94] put the sum of running time is 4394
+E0520 15:04:39.369987 271381952 performance.cpp:93] put number is 60000
+E0520 15:04:39.370033 271381952 performance.cpp:94] put the sum of running time is 5854
+E0520 15:04:40.938989 271381952 performance.cpp:93] put number is 80000
+E0520 15:04:40.939231 271381952 performance.cpp:94] put the sum of running time is 7351
+Percentile:99=1 ,95=1 ,90=0 ,50=0
+E0520 15:04:42.327685 271381952 performance.cpp:110] put number is 100000
+E0520 15:04:42.327750 271381952 performance.cpp:111] put the sum of running time is 8685
+E0520 15:04:58.975028 271381952 performance.cpp:128] get number is 80000
+E0520 15:04:58.975072 271381952 performance.cpp:129] get the sum of running time is 16582
+E0520 15:05:14.913769 271381952 performance.cpp:128] get number is 60000
+E0520 15:05:14.914098 271381952 performance.cpp:129] get the sum of running time is 32406
+E0520 15:05:28.363790 271381952 performance.cpp:128] get number is 40000
+E0520 15:05:28.363831 271381952 performance.cpp:129] get the sum of running time is 45799
+E0520 15:05:41.392647 271381952 performance.cpp:128] get number is 20000
+E0520 15:05:41.392709 271381952 performance.cpp:129] get the sum of running time is 58776
+E0520 15:05:58.349974 271381952 performance.cpp:128] get number is 0
+E0520 15:05:58.350919 271381952 performance.cpp:129] get the sum of running time is 75652
+E0520 15:05:58.351766 271381952 performance.cpp:135] get number is 100000
+E0520 15:05:58.351807 271381952 performance.cpp:136] get the sum of running time is 75652
+Percentile:99=2 ,95=1 ,90=1 ,50=1
+E0520 15:05:58.778133 271381952 performance.cpp:160] get number is 80000
+E0520 15:05:58.778167 271381952 performance.cpp:161] get the sum of running time is 400
+E0520 15:05:59.205137 271381952 performance.cpp:160] get number is 60000
+E0520 15:05:59.205173 271381952 performance.cpp:161] get the sum of running time is 804
+E0520 15:05:59.655966 271381952 performance.cpp:160] get number is 40000
+E0520 15:05:59.656018 271381952 performance.cpp:161] get the sum of running time is 1228
+E0520 15:06:00.207448 271381952 performance.cpp:160] get number is 20000
+E0520 15:06:00.207509 271381952 performance.cpp:161] get the sum of running time is 1740
+E0520 15:06:00.877245 271381952 performance.cpp:160] get number is 0
+E0520 15:06:00.877305 271381952 performance.cpp:161] get the sum of running time is 2388
+Percentile:99=1 ,95=0 ,90=0 ,50=0
+E0520 15:06:00.877959 271381952 performance.cpp:174] In cache get number is 100000
+E0520 15:06:00.877998 271381952 performance.cpp:175] In cache get the sum of running time is 2388
+[       OK ] TablePerformance.Put (87744 ms)
+[----------] 1 test from TablePerformance (87744 ms total)
+
+
+
+[ RUN      ] TablePerformance.Put
+E0520 15:13:32.476459 282170816 performance.cpp:93] put number is 0
+E0520 15:13:32.477042 282170816 performance.cpp:94] put the sum of running time is 2
+E0520 15:13:46.306356 282170816 performance.cpp:93] put number is 200000
+E0520 15:13:46.307307 282170816 performance.cpp:94] put the sum of running time is 13204
+E0520 15:13:57.445554 282170816 performance.cpp:93] put number is 400000
+E0520 15:13:57.445751 282170816 performance.cpp:94] put the sum of running time is 23887
+E0520 15:14:09.916169 282170816 performance.cpp:93] put number is 600000
+E0520 15:14:09.916613 282170816 performance.cpp:94] put the sum of running time is 35877
+E0520 15:14:21.306366 282170816 performance.cpp:93] put number is 800000
+E0520 15:14:21.307147 282170816 performance.cpp:94] put the sum of running time is 46807
+Percentile:99=1 ,95=1 ,90=0 ,50=0
+E0520 15:14:32.216626 282170816 performance.cpp:110] put number is 1000000
+E0520 15:14:32.217061 282170816 performance.cpp:111] put the sum of running time is 57285
+E0520 15:33:39.502332 282170816 performance.cpp:128] get number is 800000
+E0520 15:33:39.504436 282170816 performance.cpp:129] get the sum of running time is 1146370
+E0520 15:51:54.300057 282170816 performance.cpp:128] get number is 600000
+E0520 15:51:54.301985 282170816 performance.cpp:129] get the sum of running time is 2240259
+E0520 16:10:23.194365 282170816 performance.cpp:128] get number is 400000
+E0520 16:10:23.194970 282170816 performance.cpp:129] get the sum of running time is 3348191
+E0520 16:28:29.176110 282170816 performance.cpp:128] get number is 200000
+E0520 16:28:29.176905 282170816 performance.cpp:129] get the sum of running time is 4433172
+E0520 16:46:18.550745 282170816 performance.cpp:128] get number is 0
+E0520 16:46:18.553516 282170816 performance.cpp:129] get the sum of running time is 5501468
+E0520 16:46:18.570595 282170816 performance.cpp:135] get number is 1000000
+E0520 16:46:18.570637 282170816 performance.cpp:136] get the sum of running time is 5501468
+Percentile:99=9 ,95=7 ,90=6 ,50=5
+E0520 16:46:26.440223 282170816 performance.cpp:160] get number is 800000
+E0520 16:46:26.440537 282170816 performance.cpp:161] get the sum of running time is 7462
+E0520 16:46:34.652972 282170816 performance.cpp:160] get number is 600000
+E0520 16:46:34.653467 282170816 performance.cpp:161] get the sum of running time is 15223
+E0520 16:46:42.551419 282170816 performance.cpp:160] get number is 400000
+E0520 16:46:42.552291 282170816 performance.cpp:161] get the sum of running time is 22711
+E0520 16:46:48.449216 282170816 performance.cpp:160] get number is 200000
+E0520 16:46:48.449484 282170816 performance.cpp:161] get the sum of running time is 28244
+E0520 16:46:54.028611 282170816 performance.cpp:160] get number is 0
+E0520 16:46:54.029534 282170816 performance.cpp:161] get the sum of running time is 33477
+Percentile:99=1 ,95=0 ,90=0 ,50=0
+E0520 16:46:54.037175 282170816 performance.cpp:174] In cache get number is 1000000
+E0520 16:46:54.037230 282170816 performance.cpp:175] In cache get the sum of running time is 33477
+[       OK ] TablePerformance.Put (5605404 ms)
+
+
+
+[ RUN      ] TablePerformance.PutDeepLearning
+E0522 17:18:50.337216 350893504 performance.cpp:224] put number is 0
+E0522 17:18:50.338646 350893504 performance.cpp:225] put the sum of running time is 3
+E0522 17:19:08.833622 350893504 performance.cpp:224] put number is 20000
+E0522 17:19:08.834455 350893504 performance.cpp:225] put the sum of running time is 18384
+E0522 17:19:25.925484 350893504 performance.cpp:224] put number is 40000
+E0522 17:19:25.926383 350893504 performance.cpp:225] put the sum of running time is 35368
+E0522 17:19:44.396126 350893504 performance.cpp:224] put number is 60000
+E0522 17:19:44.396900 350893504 performance.cpp:225] put the sum of running time is 53705
+E0522 17:20:01.987996 350893504 performance.cpp:224] put number is 80000
+E0522 17:20:01.988970 350893504 performance.cpp:225] put the sum of running time is 71199
+Percentile:99=2 ,95=1 ,90=1 ,50=1
+E0522 17:20:22.034813 350893504 performance.cpp:241] put number is 100000
+E0522 17:20:22.035511 350893504 performance.cpp:242] put the sum of running time is 91089
+[       OK ] TablePerformance.PutDeepLearning (91977 ms)
+[----------] 1 test from TablePerformance (91977 ms total)
+
+
+[----------] 1 test from TablePerformance
+[ RUN      ] TablePerformance.PutDeepLearning
+E0522 17:33:38.933234 366904768 performance.cpp:224] put number is 0
+E0522 17:33:38.933835 366904768 performance.cpp:225] put the sum of running time is 8
+E0522 17:35:09.553324 366904768 performance.cpp:224] put number is 20000
+E0522 17:35:09.554234 366904768 performance.cpp:225] put the sum of running time is 90015
+E0522 17:36:44.064303 366904768 performance.cpp:224] put number is 40000
+E0522 17:36:44.064725 366904768 performance.cpp:225] put the sum of running time is 183653
+E0522 17:38:14.457917 366904768 performance.cpp:224] put number is 60000
+E0522 17:38:14.458806 366904768 performance.cpp:225] put the sum of running time is 273235
+E0522 17:39:44.802481 366904768 performance.cpp:224] put number is 80000
+E0522 17:39:44.803416 366904768 performance.cpp:225] put the sum of running time is 362754
+Percentile:99=10 ,95=6 ,90=5 ,50=4
+E0522 17:41:16.270328 366904768 performance.cpp:241] put number is 100000
+E0522 17:41:16.270941 366904768 performance.cpp:242] put the sum of running time is 453339
+[       OK ] TablePerformance.PutDeepLearning (458369 ms)
+[----------] 1 test from TablePerformance (458369 ms total)
+4.7G文件 
+
+
+
+[ RUN      ] TablePerformance.PutDeepLearning
+E0522 19:00:28.635190 363591104 performance.cpp:224] put number is 0
+E0522 19:00:28.635983 363591104 performance.cpp:225] put the sum of running time is 2
+E0522 19:00:45.976106 363591104 performance.cpp:224] put number is 20000
+E0522 19:00:45.976625 363591104 performance.cpp:225] put the sum of running time is 17269
+E0522 19:01:02.941442 363591104 performance.cpp:224] put number is 40000
+E0522 19:01:02.942296 363591104 performance.cpp:225] put the sum of running time is 34149
+E0522 19:01:19.718842 363591104 performance.cpp:224] put number is 60000
+E0522 19:01:19.719274 363591104 performance.cpp:225] put the sum of running time is 50844
+E0522 19:01:36.538352 363591104 performance.cpp:224] put number is 80000
+E0522 19:01:36.538995 363591104 performance.cpp:225] put the sum of running time is 67568
+Percentile:99=2 ,95=1 ,90=1 ,50=1
+E0522 19:01:53.330859 363591104 performance.cpp:241] put number is 100000
+E0522 19:01:53.331815 363591104 performance.cpp:242] put the sum of running time is 84263
+E0522 19:02:19.706661 363591104 performance.cpp:261] get number is 80000
+E0522 19:02:19.707264 363591104 performance.cpp:262] get the sum of running time is 26239
+E0522 19:02:46.206576 363591104 performance.cpp:261] get number is 60000
+E0522 19:02:46.207051 363591104 performance.cpp:262] get the sum of running time is 52533
+E0522 19:03:13.121320 363591104 performance.cpp:261] get number is 40000
+E0522 19:03:13.121845 363591104 performance.cpp:262] get the sum of running time is 79023
+E0522 19:03:37.992764 363591104 performance.cpp:261] get number is 20000
+E0522 19:03:37.993511 363591104 performance.cpp:262] get the sum of running time is 103498
+E0522 19:04:04.976297 363591104 performance.cpp:261] get number is 0
+E0522 19:04:04.976723 363591104 performance.cpp:262] get the sum of running time is 130031
+E0522 19:04:04.979024 363591104 performance.cpp:268] get number is 100000
+E0522 19:04:04.979074 363591104 performance.cpp:269] get the sum of running time is 130031
+Percentile:99=9 ,95=2 ,90=2 ,50=1
+E0522 19:04:06.441198 363591104 performance.cpp:295] get number is 80000
+E0522 19:04:06.441238 363591104 performance.cpp:296] get the sum of running time is 1172
+E0522 19:04:07.904649 363591104 performance.cpp:295] get number is 60000
+E0522 19:04:07.904697 363591104 performance.cpp:296] get the sum of running time is 2298
+E0522 19:04:09.438356 363591104 performance.cpp:295] get number is 40000
+E0522 19:04:09.438407 363591104 performance.cpp:296] get the sum of running time is 3424
+E0522 19:04:11.376508 363591104 performance.cpp:295] get number is 20000
+E0522 19:04:11.376926 363591104 performance.cpp:296] get the sum of running time is 4852
+E0522 19:04:13.420126 363591104 performance.cpp:295] get number is 0
+E0522 19:04:13.420176 363591104 performance.cpp:296] get the sum of running time is 6190
+Percentile:99=1 ,95=1 ,90=0 ,50=0
+E0522 19:04:13.421022 363591104 performance.cpp:309] In cache get number is 100000
+E0522 19:04:13.421063 363591104 performance.cpp:310] In cache get the sum of running time is 6190
+[       OK ] TablePerformance.PutDeepLearning (225735 ms)
+
+
+
+[ RUN      ] TablePerformance.PutDeepLearning
+E0522 19:29:33.539151 128071104 performance.cpp:224] put number is 0
+E0522 19:29:33.540822 128071104 performance.cpp:225] put the sum of running time is 2
+E0522 19:29:51.414037 128071104 performance.cpp:224] put number is 20000
+E0522 19:29:51.415205 128071104 performance.cpp:225] put the sum of running time is 17771
+E0522 19:30:08.108058 128071104 performance.cpp:224] put number is 40000
+E0522 19:30:08.109144 128071104 performance.cpp:225] put the sum of running time is 34361
+E0522 19:30:24.563764 128071104 performance.cpp:224] put number is 60000
+E0522 19:30:24.564548 128071104 performance.cpp:225] put the sum of running time is 50724
+E0522 19:30:41.536494 128071104 performance.cpp:224] put number is 80000
+E0522 19:30:41.537693 128071104 performance.cpp:225] put the sum of running time is 67599
+Percentile:99=2 ,95=1 ,90=1 ,50=1
+E0522 19:30:58.241505 128071104 performance.cpp:241] put number is 100000
+E0522 19:30:58.242182 128071104 performance.cpp:242] put the sum of running time is 84212
+E0522 19:31:18.628176 128071104 performance.cpp:261] get number is 80000
+E0522 19:31:18.628612 128071104 performance.cpp:262] get the sum of running time is 20143
+E0522 19:31:43.815173 128071104 performance.cpp:261] get number is 60000
+E0522 19:31:43.816156 128071104 performance.cpp:262] get the sum of running time is 44865
+E0522 19:32:12.167541 128071104 performance.cpp:261] get number is 40000
+E0522 19:32:12.168298 128071104 performance.cpp:262] get the sum of running time is 72787
+E0522 19:32:41.823132 128071104 performance.cpp:261] get number is 20000
+E0522 19:32:41.823455 128071104 performance.cpp:262] get the sum of running time is 101976
+E0522 19:33:22.764684 128071104 performance.cpp:261] get number is 0
+E0522 19:33:22.765040 128071104 performance.cpp:262] get the sum of running time is 141560
+E0522 19:33:22.766563 128071104 performance.cpp:268] get number is 100000
+E0522 19:33:22.766602 128071104 performance.cpp:269] get the sum of running time is 141560
+Percentile:99=11 ,95=2 ,90=2 ,50=1
+E0522 19:33:24.755523 128071104 performance.cpp:295] get number is 80000
+E0522 19:33:24.755599 128071104 performance.cpp:296] get the sum of running time is 1489
+E0522 19:33:27.676208 128071104 performance.cpp:295] get number is 60000
+E0522 19:33:27.676410 128071104 performance.cpp:296] get the sum of running time is 3634
+E0522 19:33:29.939877 128071104 performance.cpp:295] get number is 40000
+E0522 19:33:29.939935 128071104 performance.cpp:296] get the sum of running time is 5246
+E0522 19:33:31.762495 128071104 performance.cpp:295] get number is 20000
+E0522 19:33:31.762586 128071104 performance.cpp:296] get the sum of running time is 6606
+E0522 19:33:33.843264 128071104 performance.cpp:295] get number is 0
+E0522 19:33:33.846653 128071104 performance.cpp:296] get the sum of running time is 7950
+Percentile:99=1 ,95=1 ,90=0 ,50=0
+E0522 19:33:33.847684 128071104 performance.cpp:309] In cache get number is 100000
+E0522 19:33:33.847786 128071104 performance.cpp:310] In cache get the sum of running time is 7950
+[       OK ] TablePerformance.PutDeepLearning (241723 ms)
+
+
+
+[ RUN      ] TablePerformance.PutDeepLearning
+E0522 19:36:43.552947 142665152 performance.cpp:210] sample = 100000
+E0522 19:36:43.554801 142665152 performance.cpp:211] data_value = 10000
+E0522 19:36:43.556643 142665152 performance.cpp:226] put number is 0
+E0522 19:36:43.556756 142665152 performance.cpp:227] put the sum of running time is 2
+E0522 19:37:02.303975 142665152 performance.cpp:226] put number is 20000
+E0522 19:37:02.304421 142665152 performance.cpp:227] put the sum of running time is 18628
+E0522 19:37:23.052242 142665152 performance.cpp:226] put number is 40000
+E0522 19:37:23.052978 142665152 performance.cpp:227] put the sum of running time is 39206
+E0522 19:37:45.846907 142665152 performance.cpp:226] put number is 60000
+E0522 19:37:45.847313 142665152 performance.cpp:227] put the sum of running time is 61765
+E0522 19:38:07.156643 142665152 performance.cpp:226] put number is 80000
+E0522 19:38:07.157024 142665152 performance.cpp:227] put the sum of running time is 82913
+Percentile:99=2 ,95=2 ,90=1 ,50=1
+E0522 19:38:30.113293 142665152 performance.cpp:243] put number is 100000
+E0522 19:38:30.113561 142665152 performance.cpp:244] put the sum of running time is 105658
+E0522 19:38:49.048950 142665152 performance.cpp:263] get number is 80000
+E0522 19:38:49.049234 142665152 performance.cpp:264] get the sum of running time is 18837
+E0522 19:39:11.892863 142665152 performance.cpp:263] get number is 60000
+E0522 19:39:11.893100 142665152 performance.cpp:264] get the sum of running time is 41323
+E0522 19:39:31.891425 142665152 performance.cpp:263] get number is 40000
+E0522 19:39:31.891849 142665152 performance.cpp:264] get the sum of running time is 61003
+E0522 19:39:52.632158 142665152 performance.cpp:263] get number is 20000
+E0522 19:39:52.632618 142665152 performance.cpp:264] get the sum of running time is 81365
+E0522 19:40:13.547231 142665152 performance.cpp:263] get number is 0
+E0522 19:40:13.547483 142665152 performance.cpp:264] get the sum of running time is 101880
+E0522 19:40:13.548235 142665152 performance.cpp:270] get number is 100000
+E0522 19:40:13.548280 142665152 performance.cpp:271] get the sum of running time is 101880
+Percentile:99=6 ,95=2 ,90=1 ,50=1
+E0522 19:40:14.927340 142665152 performance.cpp:297] get number is 80000
+E0522 19:40:14.927417 142665152 performance.cpp:298] get the sum of running time is 1180
+E0522 19:40:15.822392 142665152 performance.cpp:297] get number is 60000
+E0522 19:40:15.822437 142665152 performance.cpp:298] get the sum of running time is 1995
+E0522 19:40:16.686981 142665152 performance.cpp:297] get number is 40000
+E0522 19:40:16.687036 142665152 performance.cpp:298] get the sum of running time is 2778
+E0522 19:40:17.455652 142665152 performance.cpp:297] get number is 20000
+E0522 19:40:17.455698 142665152 performance.cpp:298] get the sum of running time is 3496
+E0522 19:40:18.100894 142665152 performance.cpp:297] get number is 0
+E0522 19:40:18.100940 142665152 performance.cpp:298] get the sum of running time is 4093
+Percentile:99=1 ,95=0 ,90=0 ,50=0
+E0522 19:40:18.101763 142665152 performance.cpp:311] In cache get number is 100000
+E0522 19:40:18.101824 142665152 performance.cpp:312] In cache get the sum of running time is 4093
+[       OK ] TablePerformance.PutDeepLearning (215236 ms)
+
+
+
+[ RUN      ] TablePerformance.PutDeepLearning
+E0522 19:48:24.020364 267478464 performance.cpp:210] sample = 100000
+E0522 19:48:24.028842 267478464 performance.cpp:211] data_value = 100000
+E0522 19:48:24.046397 267478464 performance.cpp:226] put number is 0
+E0522 19:48:24.046586 267478464 performance.cpp:227] put the sum of running time is 17
+E0522 19:51:19.467350 267478464 performance.cpp:226] put number is 20000
+E0522 19:51:19.468072 267478464 performance.cpp:227] put the sum of running time is 174376
+E0522 19:54:04.159765 267478464 performance.cpp:226] put number is 40000
+E0522 19:54:04.160753 267478464 performance.cpp:227] put the sum of running time is 337835
+E0522 19:56:48.636520 267478464 performance.cpp:226] put number is 60000
+E0522 19:56:48.637965 267478464 performance.cpp:227] put the sum of running time is 501043
+E0522 19:59:32.141649 267478464 performance.cpp:226] put number is 80000
+E0522 19:59:32.143002 267478464 performance.cpp:227] put the sum of running time is 663286
+Percentile:99=16 ,95=10 ,90=9 ,50=8
+E0522 20:02:19.822185 267478464 performance.cpp:243] put number is 100000
+E0522 20:02:19.822937 267478464 performance.cpp:244] put the sum of running time is 829622
+E0522 20:02:19.827267 267478464 table.h:341] 99900
+E0522 20:02:19.827327 267478464 table.h:342] 7016996765293437281
+Assertion failed: (start_offset == message_offset), function FindMessage, file /Users/magnetowang/Documents/GitHub/IcebergDB/ibdb/src/storage/table.h, line 344.
+run.sh: line 16: 76478 Abort trap: 6           ./$1 --gtest_output=xml:./reports/$1.xml
+magnetowangdeMacBook-Pro:ibdb magnetowang$
+
+
+
+
+[ RUN      ] TablePerformance.PutDeepLearning
+E0522 20:09:05.430845 307803584 performance.cpp:210] sample = 10000
+E0522 20:09:05.439517 307803584 performance.cpp:211] data_value = 100000
+E0522 20:09:05.450587 307803584 performance.cpp:226] put number is 0
+E0522 20:09:05.450668 307803584 performance.cpp:227] put the sum of running time is 11
+E0522 20:09:21.722345 307803584 performance.cpp:226] put number is 2000
+E0522 20:09:21.722987 307803584 performance.cpp:227] put the sum of running time is 16239
+E0522 20:09:37.847321 307803584 performance.cpp:226] put number is 4000
+E0522 20:09:37.848664 307803584 performance.cpp:227] put the sum of running time is 32301
+E0522 20:09:54.811672 307803584 performance.cpp:226] put number is 6000
+E0522 20:09:54.812444 307803584 performance.cpp:227] put the sum of running time is 49183
+E0522 20:10:12.320771 307803584 performance.cpp:226] put number is 8000
+E0522 20:10:12.322074 307803584 performance.cpp:227] put the sum of running time is 66582
+Percentile:99=16 ,95=10 ,90=9 ,50=8
+E0522 20:10:29.338780 307803584 performance.cpp:243] put number is 10000
+E0522 20:10:29.339512 307803584 performance.cpp:244] put the sum of running time is 83522
+E0522 20:10:30.851838 307803584 performance.cpp:263] get number is 8000
+E0522 20:10:30.851923 307803584 performance.cpp:264] get the sum of running time is 1462
+E0522 20:10:33.231884 307803584 performance.cpp:263] get number is 6000
+E0522 20:10:33.232479 307803584 performance.cpp:264] get the sum of running time is 3664
+E0522 20:10:35.647087 307803584 performance.cpp:263] get number is 4000
+E0522 20:10:35.647166 307803584 performance.cpp:264] get the sum of running time is 5883
+E0522 20:10:38.309187 307803584 performance.cpp:263] get number is 2000
+E0522 20:10:38.309880 307803584 performance.cpp:264] get the sum of running time is 8248
+E0522 20:10:40.696452 307803584 performance.cpp:263] get number is 0
+E0522 20:10:40.696538 307803584 performance.cpp:264] get the sum of running time is 10380
+E0522 20:10:40.697207 307803584 performance.cpp:270] get number is 10000
+E0522 20:10:40.697247 307803584 performance.cpp:271] get the sum of running time is 10380
+Percentile:99=9 ,95=2 ,90=1 ,50=1
+E0522 20:10:40.920411 307803584 performance.cpp:297] get number is 8000
+E0522 20:10:40.920761 307803584 performance.cpp:298] get the sum of running time is 195
+E0522 20:10:41.152026 307803584 performance.cpp:297] get number is 6000
+E0522 20:10:41.152076 307803584 performance.cpp:298] get the sum of running time is 410
+E0522 20:10:41.495383 307803584 performance.cpp:297] get number is 4000
+E0522 20:10:41.497711 307803584 performance.cpp:298] get the sum of running time is 726
+E0522 20:10:41.831593 307803584 performance.cpp:297] get number is 2000
+E0522 20:10:41.831629 307803584 performance.cpp:298] get the sum of running time is 1012
+E0522 20:10:41.980672 307803584 performance.cpp:297] get number is 0
+E0522 20:10:41.980715 307803584 performance.cpp:298] get the sum of running time is 1139
+Percentile:99=1 ,95=1 ,90=1 ,50=0
+E0522 20:10:41.980844 307803584 performance.cpp:311] In cache get number is 10000
+E0522 20:10:41.980877 307803584 performance.cpp:312] In cache get the sum of running time is 1139
+[       OK ] TablePerformance.PutDeepLearning (96858 ms)
+
+
+[ RUN      ] TablePerformance.PutDeepLearning
+E0522 20:18:52.617092 435074496 performance.cpp:210] sample = 10000
+E0522 20:18:52.618815 435074496 performance.cpp:211] data_value = 10000
+E0522 20:18:52.620497 435074496 performance.cpp:226] put number is 0
+E0522 20:18:52.620555 435074496 performance.cpp:227] put the sum of running time is 2
+E0522 20:18:54.693120 435074496 performance.cpp:226] put number is 2000
+E0522 20:18:54.693183 435074496 performance.cpp:227] put the sum of running time is 2061
+E0522 20:18:56.869648 435074496 performance.cpp:226] put number is 4000
+E0522 20:18:56.869700 435074496 performance.cpp:227] put the sum of running time is 4220
+E0522 20:18:58.876260 435074496 performance.cpp:226] put number is 6000
+E0522 20:18:58.876308 435074496 performance.cpp:227] put the sum of running time is 6214
+E0522 20:19:00.833186 435074496 performance.cpp:226] put number is 8000
+E0522 20:19:00.833243 435074496 performance.cpp:227] put the sum of running time is 8162
+Percentile:99=3 ,95=2 ,90=1 ,50=1
+E0522 20:19:03.115725 435074496 performance.cpp:243] put number is 10000
+E0522 20:19:03.116801 435074496 performance.cpp:244] put the sum of running time is 10434
+E0522 20:19:04.005173 435074496 performance.cpp:263] get number is 8000
+E0522 20:19:04.005556 435074496 performance.cpp:264] get the sum of running time is 868
+E0522 20:19:04.730965 435074496 performance.cpp:263] get number is 6000
+E0522 20:19:04.731075 435074496 performance.cpp:264] get the sum of running time is 1575
+E0522 20:19:05.372225 435074496 performance.cpp:263] get number is 4000
+E0522 20:19:05.372288 435074496 performance.cpp:264] get the sum of running time is 2202
+E0522 20:19:05.923904 435074496 performance.cpp:263] get number is 2000
+E0522 20:19:05.924082 435074496 performance.cpp:264] get the sum of running time is 2746
+E0522 20:19:06.753402 435074496 performance.cpp:263] get number is 0
+E0522 20:19:06.753458 435074496 performance.cpp:264] get the sum of running time is 3568
+E0522 20:19:06.753535 435074496 performance.cpp:270] get number is 10000
+E0522 20:19:06.753563 435074496 performance.cpp:271] get the sum of running time is 3568
+Percentile:99=2 ,95=1 ,90=1 ,50=0
+E0522 20:19:06.783860 435074496 performance.cpp:297] get number is 8000
+E0522 20:19:06.783927 435074496 performance.cpp:298] get the sum of running time is 26
+E0522 20:19:06.828554 435074496 performance.cpp:297] get number is 6000
+E0522 20:19:06.828624 435074496 performance.cpp:298] get the sum of running time is 58
+E0522 20:19:06.876161 435074496 performance.cpp:297] get number is 4000
+E0522 20:19:06.876281 435074496 performance.cpp:298] get the sum of running time is 95
+E0522 20:19:06.912381 435074496 performance.cpp:297] get number is 2000
+E0522 20:19:06.912447 435074496 performance.cpp:298] get the sum of running time is 123
+E0522 20:19:06.956779 435074496 performance.cpp:297] get number is 0
+E0522 20:19:06.956845 435074496 performance.cpp:298] get the sum of running time is 156
+Percentile:99=1 ,95=0 ,90=0 ,50=0
+E0522 20:19:06.956980 435074496 performance.cpp:311] In cache get number is 10000
+E0522 20:19:06.957016 435074496 performance.cpp:312] In cache get the sum of running time is 156
+[       OK ] TablePerformance.PutDeepLearning (14386 ms)
+
+
+
+
+
+[ RUN      ] TablePerformance.PutDeepLearning
+E0522 20:25:10.840600 348583360 performance.cpp:210] sample = 10000
+E0522 20:25:10.841423 348583360 performance.cpp:211] data_value = 1000000
+E0522 20:25:10.939419 348583360 performance.cpp:226] put number is 0
+E0522 20:25:10.939483 348583360 performance.cpp:227] put the sum of running time is 97
+E0522 20:28:09.546589 348583360 performance.cpp:226] put number is 2000
+E0522 20:28:09.547583 348583360 performance.cpp:227] put the sum of running time is 178263
+E0522 20:31:17.356128 348583360 performance.cpp:226] put number is 4000
+E0522 20:31:17.357306 348583360 performance.cpp:227] put the sum of running time is 365646
+E0522 20:34:33.210078 348583360 performance.cpp:226] put number is 6000
+E0522 20:34:33.211076 348583360 performance.cpp:227] put the sum of running time is 560969
+E0522 20:37:54.944885 348583360 performance.cpp:226] put number is 8000
+E0522 20:37:54.945937 348583360 performance.cpp:227] put the sum of running time is 762170
+Percentile:99=169 ,95=129 ,90=118 ,50=93
+E0522 20:41:33.187789 348583360 performance.cpp:243] put number is 10000
+E0522 20:41:33.188572 348583360 performance.cpp:244] put the sum of running time is 979842
+E0522 20:41:33.190917 348583360 table.h:341] 9900
+E0522 20:41:33.190984 348583360 table.h:342] 7016996765293437281
+Assertion failed: (start_offset == message_offset), function FindMessage, file /Users/magnetowang/Documents/GitHub/IcebergDB/ibdb/src/storage/table.h, line 344.
+run.sh: line 16: 82596 Abort trap: 6           ./$1 --gtest_output=xml:./reports/$1.xml
+magnetowangdeMacBook-Pro:ibdb magnetowang$
