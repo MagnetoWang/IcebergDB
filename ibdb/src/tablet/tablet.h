@@ -185,6 +185,35 @@ bool Tablet::Put(const ::ibdb::rpc::PutRequest* const request, ::ibdb::rpc::PutR
     return true;
 }
 
+bool Tablet::Put(const ::ibdb::rpc::PutRequest* const request) {
+    std::string statement = request->statement();
+    std::string delim(" ");
+    std::vector<std::string> result;
+    ibdb::base::SplitString(statement, delim, &result);
+    RpcCode code = RpcCode::OK;
+    // 加锁，访问类变量
+    std::lock_guard<std::mutex> lock(mu_);
+    auto iterator = table_map_.find(result.at(1));
+    if (iterator == table_map_.end()) {
+        // response->set_msg("table is not exist");
+        // response->set_code(RpcCode::FAILED);
+        return false;
+    }
+    std::shared_ptr<Table> table = iterator->second;
+    table->Put(statement);
+    auto manifest = table_manifest_map_.find(result.at(1));
+    if (manifest == table_manifest_map_.end()) {
+        LOG(ERROR) << "no table manifest in map table_name[" << result.at(1) << "]";
+        return false;
+    }
+    uint64_t offset = manifest->second.current_offset();
+    offset++;
+    manifest->second.set_current_offset(offset);
+    // response->set_msg("put ok");
+    // response->set_code(code);
+    return true;
+}
+
 // get table_name key value timestamp
 // TODO 判断输入参数是否正确
 bool Tablet::Get(const ::ibdb::rpc::GetRequest* const request, ::ibdb::rpc::GetResponse* const response) {
