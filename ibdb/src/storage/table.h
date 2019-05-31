@@ -255,7 +255,7 @@ bool Table::Get(std::string& statement, std::string& message) {
     }
     if (offset_message_.Contains(offset)) {
         message = offset_message_.Find(offset)->second;
-        LOG(INFO) << "offset is existed in cache";
+        // LOG(INFO) << "offset is existed in cache";
         return true;
     }
     // find message by offset
@@ -363,7 +363,7 @@ bool Table::FindMessage(uint64_t& offset, uint64_t& start_offset, uint32_t& pos,
         pos = pos + 12 + message_size;
         start_offset++;
     }
-    LOG(INFO) << "get message is successed message[" << message->data() << "]";
+    // LOG(INFO) << "get message is successed message[" << message->data() << "]";
     *result = Slice(message->data(), message->size());
     // delete rf_;
     return true;

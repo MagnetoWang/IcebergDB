@@ -237,7 +237,7 @@ public:
             return Status::IOError(io_error);
         }
         int message_size = ibdb::base::DecodeFixed32(scratch);
-        LOG(INFO) << "message size is " << message_size;
+        // LOG(INFO) << "message size is " << message_size;
         scratch = new char[message_size + 1];
         offset += message_length;
         read_size = ::pread(fd_, scratch, message_size, static_cast<off_t>(offset));
@@ -247,7 +247,7 @@ public:
             return Status::IOError(io_error);
         }
         scratch[message_size] = '\0';
-        LOG(INFO) << "get message is successed message[" << scratch << "]";
+        // LOG(INFO) << "get message is successed message[" << scratch << "]";
         *result = Slice(scratch, message_size);
         return Status::OK();
     }
@@ -299,6 +299,7 @@ RandomAccessFileHandle::RandomAccessFileHandle(std::string& filename, uint64_t o
     :   filename_(filename),
         current_offset_(offset) {
             filestream_ = fopen(filename.c_str(), "r+");
+            // LOG(ERROR) << filename;
             assert(filestream_ != nullptr);
             fd_ = fileno(filestream_);
             limiter_ = new Limiter(FLAGS_limiter_max_required);

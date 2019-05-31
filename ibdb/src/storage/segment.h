@@ -234,13 +234,13 @@ bool Segment::Put(const Slice& key, const uint64_t timestamp, const Slice& value
     ValueEntry* value_entry =  segment_->FindEqual(key)->value();
     uint64_t ts = timestamp;
     if(!value_entry->Contains(ts)) {
-        LOG(INFO) << "new Index timestamp[" << ts << "]";
+        // LOG(INFO) << "new Index timestamp[" << ts << "]";
         Index* index = NewIndex();
         value_entry->Insert(ts, index);
     }
     Index* index = value_entry->FindEqual(ts)->value();
     if(index->Contains(value)) {
-        LOG(INFO) << "value[" << index->FindEqual(value)->value() <<"] is existed";
+        // LOG(INFO) << "value[" << index->FindEqual(value)->value() <<"] is existed";
         return false;
     }
     uint64_t segment_offset = offset;
@@ -249,34 +249,34 @@ bool Segment::Put(const Slice& key, const uint64_t timestamp, const Slice& value
     Slice new_value(data, value.size());
 
     index->Insert(new_value, segment_offset);
-    LOG(INFO) << "key[" << key.data() 
-              <<"] timestamp[" << ts 
-              << "] value[" << new_value.data() 
-              << "] offset[" << segment_offset <<"] is put successfully";
+    // LOG(INFO) << "key[" << key.data() 
+    //           <<"] timestamp[" << ts 
+    //           << "] value[" << new_value.data() 
+    //           << "] offset[" << segment_offset <<"] is put successfully";
     return true;
 }
 
 bool Segment::Get(const Slice& key, const uint64_t timestamp, const Slice& value, uint64_t& offset) {
     if(!Contains(key)) {
-        LOG(INFO) << "key[" << key.data() <<"] is not existed";
+        LOG(ERROR) << "key[" << key.data() <<"] is not existed";
         return false;
     }
     ValueEntry* value_entry = segment_->FindEqual(key)->value();
     uint64_t ts = timestamp;
     if(!value_entry->Contains(ts)) {
-        LOG(INFO) << "timestamp[" << timestamp <<"] is not existed";
+        LOG(ERROR) << "timestamp[" << timestamp <<"] is not existed";
         return false;
     }
     Index* index = value_entry->FindEqual(ts)->value();
     if(!index->Contains(value)) {
-        LOG(INFO) << "value[" << value.data() <<"] is not existed";
+        LOG(ERROR) << "value[" << value.data() <<"] is not existed";
         return false;
     }
     offset = index->FindEqual(value)->value();
-    LOG(INFO) << "Get key[" << key.data() 
-              <<"] timestamp[" << ts 
-              << "] value[" << value.data() 
-              << "] offset[" << offset <<"] is successed";
+    // LOG(INFO) << "Get key[" << key.data() 
+    //           <<"] timestamp[" << ts 
+    //           << "] value[" << value.data() 
+    //           << "] offset[" << offset <<"] is successed";
     return true;
 }
 
