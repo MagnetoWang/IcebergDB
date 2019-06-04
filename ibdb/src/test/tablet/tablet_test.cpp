@@ -2,7 +2,7 @@
  * @Author: MagnetoWang 
  * @Date: 2019-04-14 21:50:38 
  * @Last Modified by: MagnetoWang
- * @Last Modified time: 2019-04-15 18:34:50
+ * @Last Modified time: 2019-05-06 10:40:40
  */
 #include "tablet/tablet.h"
 
@@ -107,8 +107,6 @@ TEST(TabletTest, PutAndGetRequest) {
         ASSERT_EQ(insert_vec.at(i), message);
     }
 }
-
-
 
 } // tablet
 } // ibdb
