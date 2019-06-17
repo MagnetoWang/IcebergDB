@@ -157,6 +157,26 @@ static inline void sleep(uint64_t micro_second) {
     usleep(micro_second);
 }
 
+// start from the length power of 10
+// 生成数字，从10的n次方开始生成一定数量的纯数字字符串
+static inline std::vector<std::string> GenerateNumber(uint32_t length, uint32_t number) {
+    std::vector<std::string> values;
+    std::string base("1");
+    for (uint32_t i = 1; i < length; i++) {
+        base = base + "0";
+    }
+    // std::cout << base << std::endl;
+    for (uint32_t i = 0; i < number; i++) {
+        std::string suffix = std::to_string(i);
+        // std::string replace("0", suffix.size());
+        std::string value = base.substr(0, base.size() - suffix.size());
+        value = value + suffix;
+        // std::cout << value << std::endl;
+        values.push_back(value);
+    }
+    return values;
+}
+
 } // base
 } // ibdb
 
