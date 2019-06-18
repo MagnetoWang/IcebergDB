@@ -235,6 +235,17 @@ static inline std::vector<std::string> GenerateChineseChar(uint32_t length, uint
     return values;
 }
 
+static inline uint32_t javaHash(const std::string& key) {
+    uint32_t h = 0;
+    if (h == 0 && key.size() > 0) {
+        const char* value = key.c_str();
+        for (uint32_t i = 0; i < key.size(); i++) {
+            h = 31 * h + value[i];
+        }
+    }
+    return h;
+}
+
 } // base
 } // ibdb
 
