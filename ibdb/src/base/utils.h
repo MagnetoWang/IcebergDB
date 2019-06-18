@@ -177,6 +177,64 @@ static inline std::vector<std::string> GenerateNumber(uint32_t length, uint32_t 
     return values;
 }
 
+// 26-digit 
+static inline std::vector<std::string> GenerateAlphabet(uint32_t length, uint32_t number) {
+    char* alphabet = "abcdefghijklmnopqrsduvwxyz";
+    // std::cout << sizeof(alphabet) << std::endl;
+    std::vector<std::string> values;
+    std::string base;
+    for (uint32_t i = 0; i < length; i++) {
+        base = base + alphabet[0];
+    }
+    // std::cout << base << std::endl;
+    for (uint32_t i = 0; i < number; i++) {
+        std::string value;
+        int ten_digit = i;
+        while(true) {
+            if (ten_digit == 0) {
+                break;
+            }
+            int index = ten_digit % 26;
+            ten_digit = ten_digit / 26;
+            value =  alphabet[index] + value;
+        }
+        value = base.substr(0, base.size() - value.size()) + value;
+        // std::cout << value << std::endl;
+        values.push_back(value);
+    }
+    return values;
+}
+
+// 采取类似制造纯字母的方式，制造汉字。汉字长度改变时，对应的进制也要改变
+static inline std::vector<std::string> GenerateChineseChar(uint32_t length, uint32_t number) {
+    std::string alphabet = "你好西安电子科技大学北京山东水瓶作业曾毅何谦雄伟下雨";
+    // std::cout << alphabet << std::endl;
+    // std::cout << alphabet.size() << std::endl;
+    std::vector<std::string> values;
+    std::string base;
+    for (uint32_t i = 0; i < length; i++) {
+        base = base + alphabet.substr(0, 3);
+        // std::cout << alphabet.substr(0, 3) << std::endl;
+    }
+    // std::cout << base << std::endl;
+    for (uint32_t i = 0; i < number; i++) {
+        std::string value;
+        int ten_digit = i;
+        while(true) {
+            if (ten_digit == 0) {
+                break;
+            }
+            int index = ten_digit % 26;
+            ten_digit = ten_digit / 26;
+            value =  alphabet.substr(0 + 3 * index, 3 + 3 * index) + value;
+        }
+        value = base.substr(0, base.size() - value.size()) + value;
+        // std::cout << value << std::endl;
+        values.push_back(value);
+    }
+    return values;
+}
+
 } // base
 } // ibdb
 
